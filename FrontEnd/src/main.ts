@@ -1,24 +1,36 @@
-import './assets/style.css'
+// CSS importé depuis le HTML pour eviter effet de rechargement index/login
 
-// Fonction pour récupérer les travaux depuis l'API
+let allWorks = []; // Variable globale pour stocker tous les travaux
+
 async function loadWorks() {
     try {
-      const response = await fetch('http://localhost:5678/api/works');
-      const works = await response.json();
-  
-      const gallery = document.querySelector('.gallery');
-      works.forEach(work => {
+        const response = await fetch('http://localhost:5678/api/works');
+        allWorks = await response.json(); // Stocke les travaux dans la variable globale
+
+        renderGallery(allWorks); // Affiche tous les travaux initialement
+    } catch (error) {
+        console.error('Erreur lors de la récupération des travaux:', error);
+    }
+}
+
+function renderGallery(works) {
+    const gallery = document.querySelector('.gallery');
+    gallery.innerHTML = ''; // Nettoie la galerie avant d'ajouter de nouveaux travaux
+
+    works.forEach(work => {
         const figure = document.createElement('figure');
         figure.innerHTML = `
-          <img src="${work.imageUrl}" alt="${work.title}">
-          <figcaption>${work.title}</figcaption>
+            <img src="${work.imageUrl}" alt="${work.title}">
+            <figcaption>${work.title}</figcaption>
         `;
         gallery.appendChild(figure);
-      });
-    } catch (error) {
-      console.error('Erreur lors de la récupération des travaux:', error);
-    }
-  }
+    });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    loadWorks();
+    getCategories();
+});
 
 // Fonction pour récupérer les catégories depuis l'API
 async function getCategories() {
@@ -55,15 +67,20 @@ function createFilterButtons(categories) {
     });
 }
 
-// // Fonction pour filtrer la galerie
-// function filterGallery(category) {
-//     // Logique pour filtrer les projets dans la galerie en fonction de la catégorie cliquée
-//     console.log(`Filtrer la galerie pour la catégorie: ${category}`);
-//     // Vous mettriez à jour la galerie ici
-// }
+// Fonction pour filtrer la galerie
+function filterGallery(category) {
+    if (category === 'all') {
+        renderGallery(allWorks);
+    } else {
+        const filteredWorks = allWorks.filter(work => {
+            const isMatch = work.category.name === category.name;
+            console.log(`Comparaison : ${work.category.name} === ${category.name}`, isMatch);
+            return isMatch;
+        });
+        renderGallery(filteredWorks);
+    }
+}
 
-// appel à la fonction loadWorks
+// appel à la fonction loadWorks et initialisation
 loadWorks();
-
-// Initialise les boutons filtre au chargement de la page
 document.addEventListener('DOMContentLoaded', getCategories);

@@ -7,16 +7,19 @@
 	<link rel="preconnect" href="https://fonts.googleapis.com">
 	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
+	<link rel="preload" href="./src/assets/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+	<link rel="stylesheet" href="src/assets/style.css">
 	<meta name="description" content="">
 </head>
 <body>
 <header>
-	<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1>
+	<!-- HTML OG<h1>Sophie Bluel <span>Architecte d'intérieur</span></h1> -->
+	<h1 class="logo"><a href="Sophie Bluel">Sophie Bluel<span>Architecte d'intérieur</span></a></h1>
 	<nav>
 		<ul>
 			<li>projets</li>
 			<li>contact</li>
-			<li>login</li>
+			<li><a href="login.html">login</a></li>
 			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
 		</ul>
 	</nav>
