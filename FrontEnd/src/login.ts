@@ -1,28 +1,49 @@
-document.querySelector('.formLogin').addEventListener('submit', async function(event) {
+// Sélectionne le formulaire avec la classe 'formLogin' et  écoute l'événement 'submit'
+document
+  .querySelector(".formLogin")
+  ?.addEventListener("submit", async function (event) {
+    // Empêche le rechargement de la page
     event.preventDefault();
 
-    console.log('Le formulaire a été soumis');
-    
-    var emailLogin = document.getElementById('emailLogin').value;
-    var password = document.getElementById('password').value;
-    
-    try {
-        const response = await fetch('http://localhost:5678/api/users/login', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                email: emailLogin,
-                password: password
-            })
-        });
-        if (!response.ok) {
-            throw new Error('Erreur de connexion');
-        }
-        const data = await response.json();
-        console.log('Token:', data.token); // Affiche le token dans la console
-    } catch (error) {
-        alert(error.message);
+    console.log("clic bouton ok");
+
+    // Récupère la valeur de l'élément input pour l'email
+    const emailLogin =
+      document.querySelector<HTMLInputElement>("#emailLogin")?.value;
+    // Récupère la valeur de l'élément input pour le mot de passe
+    const password =
+      document.querySelector<HTMLInputElement>("#password")?.value;
+
+    if (!emailLogin || !password) {
+      alert("Veuillez remplir tous les champs pour vous connecter");
+      return;
     }
-});
+
+    try {
+      // Envoie une requête asynchrone à l'API pour la connexion
+      const response = await fetch("http://localhost:5678/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: emailLogin, // Envoie l'email
+          password: password, // Envoie le mot de passe
+        }),
+      });
+
+      // Vérifie si la réponse n'est pas OK
+      if (!response.ok) {
+        // Lance une nouvelle erreur si la réponse n'est pas 'ok'
+        throw new Error("Erreur de connexion");
+      }
+
+      // Converti la réponse en JSON
+      const data = await response.json();
+
+      console.log("Token:", data.token);
+    } catch (error) {
+      // Affiche une alerte en cas d'erreur
+      alert("error");
+    }
+  });

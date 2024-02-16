@@ -83,7 +83,7 @@ nav li {
 	font-size: 1.2em;
 }
 
-a, ul {
+a, ul, button {
 	cursor: pointer;
 	text-decoration: none;
 }
