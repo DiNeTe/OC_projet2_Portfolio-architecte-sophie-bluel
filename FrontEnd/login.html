@@ -1,46 +1,58 @@
 <!DOCTYPE html>
 <html lang="fr">
-<head>
-	<meta charset="UTF-8">
-	<title>Sophie Bluel - Architecte d'intérieur</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap" rel="stylesheet">
-	<link rel="preload" href="./src/assets/style.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-	<link rel="stylesheet" href="src/assets/style.css">
-	<meta name="description" content="">
-</head>
-<body>
-<header>
-	<h1 class="logo"><a href="Sophie Bluel">Sophie Bluel<span>Architecte d'intérieur</span></a></h1>
-	<nav>
-		<ul>
-			<li>projets</li>
-			<li>contact</li>
-			<li><a href="login.html">login</a></li>
-			<li><img src="./assets/icons/instagram.png" alt="Instagram"></li>
-		</ul>
-	</nav>
-</header>
-<main>
-        <form class="formLogin">
-            <h2>Log in</h2>
-            <label for="emailLogin">E-mail</label>
-            <input type="email" name="emailLogin" id="emailLogin">
-            <label for="password">Mot de passe</label>
-            <input type="password" name="password" id="password">
-            <button type="submit">Se connecter</button>
-            <p><a>Mot de passe oublié</a></p>
-        </form>
-</main>
-<footer>
-	<nav>
-		<ul>
-			<li>Mentions Légales</li>
-		</ul>
-	</nav>
-</footer>
-<script type="module" src="/src/login.ts"></script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Sophie Bluel - Architecte d'intérieur</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Work+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="preload"
+      href="./src/assets/style.css"
+      as="style"
+      onload="this.onload=null;this.rel='stylesheet'"
+    />
+    <link rel="stylesheet" href="src/assets/style.css" />
+    <meta name="description" content="" />
+  </head>
+  <body>
+    <header>
+      <h1 class="logo">
+        <a href="Sophie Bluel"
+          >Sophie Bluel<span>Architecte d'intérieur</span></a
+        >
+      </h1>
+      <nav>
+        <ul>
+          <li>projets</li>
+          <li>contact</li>
+          <li><a href="login.html">login</a></li>
+          <li><img src="./assets/icons/instagram.png" alt="Instagram" /></li>
+        </ul>
+      </nav>
+    </header>
+    <main>
+      <form class="formLogin">
+        <h2>Log in</h2>
+        <label for="emailLogin">E-mail</label>
+        <input type="email" name="emailLogin" id="emailLogin" />
+        <label for="password">Mot de passe</label>
+        <input type="password" name="password" id="password" />
+        <button type="submit">Se connecter</button>
+        <p><a>Mot de passe oublié</a></p>
+      </form>
+    </main>
+    <footer>
+      <nav>
+        <ul>
+          <li>Mentions Légales</li>
+        </ul>
+      </nav>
+    </footer>
+    <script type="module" src="/src/login.ts"></script>
+  </body>
 </html>
