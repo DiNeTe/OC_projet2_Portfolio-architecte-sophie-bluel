@@ -1,3 +1,9 @@
+function resetlocalStorageToken() {
+  localStorage.removeItem("userToken");
+}
+
+resetlocalStorageToken();
+
 // Sélectionne le formulaire avec la classe 'formLogin' et  écoute l'événement 'submit'
 document
   .querySelector(".formLogin")
@@ -41,9 +47,31 @@ document
       // Converti la réponse en JSON
       const data = await response.json();
 
+      // Stocke le token et redirige si la connexion est réussie
+      if (data.token) {
+        localStorage.setItem("userToken", data.token);
+        window.location.href = "/index.html"; // Remplacer par le chemin réel
+      } else {
+        throw new Error("Token not received");
+      }
+
       console.log("Token:", data.token);
     } catch (error) {
       // Affiche une alerte en cas d'erreur
-      alert("error");
+      alert("erroError connecting : " + error.message);
     }
   });
+
+//  check si le token est dans le local storage
+function checkTokenPresence() {
+  setInterval(() => {
+    const userToken = localStorage.getItem("userToken");
+    if (userToken) {
+      console.log("Token présent:", userToken);
+    } else {
+      console.log("Token absent");
+    }
+  }, 5000); // Vérifie toutes les 5 secondes
+}
+
+checkTokenPresence();

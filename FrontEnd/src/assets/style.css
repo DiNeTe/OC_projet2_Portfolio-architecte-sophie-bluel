@@ -3,105 +3,186 @@
    License: none (public domain)
 */
 
-html, body, div, span, applet, object, iframe,
-h1, h2, h3, h4, h5, h6, p, blockquote, pre,
-a, abbr, acronym, address, big, cite, code,
-del, dfn, em, img, ins, kbd, q, s, samp,
-small, strike, strong, sub, sup, tt, var,
-b, u, i, center,
-dl, dt, dd, ol, ul, li,
-fieldset, form, label, legend,
-table, caption, tbody, tfoot, thead, tr, th, td,
-article, aside, canvas, details, embed,
-figure, figcaption, footer, header, hgroup,
-menu, nav, output, ruby, section, summary,
-time, mark, audio, video {
-	margin: 0;
-	padding: 0;
-	border: 0;
-	font-size: 100%;
-	font: inherit;
-	vertical-align: baseline;
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
 }
 /* HTML5 display-role reset for older browsers */
-article, aside, details, figcaption, figure,
-footer, header, hgroup, menu, nav, section {
-	display: block;
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
 }
 body {
-	line-height: 1;
+  line-height: 1;
 }
-ol, ul {
-	list-style: none;
+ol,
+ul {
+  list-style: none;
 }
-blockquote, q {
-	quotes: none;
+blockquote,
+q {
+  quotes: none;
 }
-blockquote:before, blockquote:after,
-q:before, q:after {
-	content: '';
-	content: none;
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
 }
 table {
-	border-collapse: collapse;
-	border-spacing: 0;
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 /** end reset css**/
 body {
-	max-width: 1140px;
-	margin:auto;
-	font-family: 'Work Sans' ;
-	font-size: 14px;
-	background: #FFFEF8;
+  max-width: 1140px;
+  margin: auto;
+  font-family: "Work Sans";
+  font-size: 14px;
+  background: #fffef8;
 }
 
 header {
-	display: flex;
-	justify-content: space-between;
-	margin: 50px 0
+  display: flex;
+  justify-content: space-between;
+  margin: 50px 0;
 }
 
 footer {
-	background: #FFFFFF;
-	height: 60px;
-	max-width: 1440px;
-	width: 100%;
+  background: #ffffff;
+  height: 60px;
+  max-width: 1440px;
+  width: 100%;
 }
 
 section {
-	margin: 50px 0
+  margin: 50px 0;
 }
 
 nav ul {
-	display: flex;
-	align-items: center;
-	list-style-type: none;
-
+  display: flex;
+  align-items: center;
+  list-style-type: none;
 }
 nav li {
-	padding: 0 10px;
-	font-size: 1.2em;
+  padding: 0 10px;
+  font-size: 1.2em;
 }
 
-a, ul, button {
-	cursor: pointer;
-	text-decoration: none;
+a,
+ul,
+button {
+  cursor: pointer;
+  text-decoration: none;
 }
 
 a:visited {
-    color: inherit;
+  color: inherit;
 }
 
 li:hover {
-	color: #B1663C;
+  color: #b1663c;
 }
 
-
-h2{
-	font-family: 'Syne';
-	font-weight: 700;
-	font-size: 30px;
-	color: #1D6154
+h2 {
+  font-family: "Syne";
+  font-weight: 700;
+  font-size: 30px;
+  color: #1d6154;
 }
 
 /* remplacé par .logo a & .logo span MODIF */
@@ -121,199 +202,214 @@ h2{
 } */
 
 .logo a {
-	display: flex;
-	flex-direction: column;	
-	font-family: 'Syne';
-	font-size: 22px;
-	font-weight: 800;
-	color: #B1663C
+  display: flex;
+  flex-direction: column;
+  font-family: "Syne";
+  font-size: 22px;
+  font-weight: 800;
+  color: #b1663c;
 }
 
 .logo span {
-	font-family: 'Work Sans';
-	font-size:10px;
-	letter-spacing: 0.1em;
+  font-family: "Work Sans";
+  font-size: 10px;
+  letter-spacing: 0.1em;
 }
 
 #introduction {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
 }
 #introduction figure {
-	flex: 1
+  flex: 1;
 }
 #introduction img {
-	display: block;
-	margin: auto;
-	width: 80%;
+  display: block;
+  margin: auto;
+  width: 80%;
 }
 
 #introduction article {
-	flex: 1
+  flex: 1;
 }
 #introduction h2 {
-	margin-bottom: 1em;
+  margin-bottom: 1em;
 }
 
 #introduction p {
-	margin-bottom: 0.5em;
+  margin-bottom: 0.5em;
 }
 
 #portfolio {
-	margin-top: 139px;
+  margin-top: 139px;
 }
 
 #portfolio h2 {
-	text-align: center;
-	margin-bottom: 1em;
+  text-align: center;
 }
 
-nav a:hover, nav li:hover {
-	font-weight: bold;
-	color: black;
+#headerPortfolio {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 51px;
+}
+
+#headerPortfolio svg {
+  margin-left: 31px;
+  align-self: center;
+}
+#txtModif {
+  align-self: center;
+  margin-left: 10px;
+}
+
+nav a:hover,
+nav li:hover {
+  font-weight: bold;
+  color: black;
 }
 
 .gallery {
-	width: 100%;
-	display: grid;
-	grid-template-columns: 1fr 1fr 1fr;
-	grid-column-gap: 20px;
-	grid-row-gap: 20px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-column-gap: 20px;
+  grid-row-gap: 20px;
 }
 
 .gallery img {
-	width: 100%;
+  width: 100%;
 }
 
 .filters {
-	justify-content: center;
-	display: flex;
-	gap: 10px;
-	margin: 51px 0px
+  justify-content: center;
+  display: flex;
+  gap: 10px;
+  margin: 51px 0px;
 }
 
 .formLogin {
-	display:flex;
-	flex-direction: column;
-	gap:7px;
-	margin: 150px auto 355px;
-    width: 379px;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 150px auto 355px;
+  width: 379px;
 }
 
 .formLogin h2 {
-    justify-content: center;
-    display: flex;
-    margin-bottom: 30px;
+  justify-content: center;
+  display: flex;
+  margin-bottom: 30px;
 }
 
 .formLogin label {
-	display: flex;
-	justify-content: start;
+  display: flex;
+  justify-content: start;
 }
 
 .formLogin input {
-	margin-bottom: 30px;
-	height: 51px;
-    box-shadow: 0px 4px 14px 0px #00000017;
-	font-size: 150%;
-    text-align: center;
-	border: none;
+  margin-bottom: 30px;
+  height: 51px;
+  box-shadow: 0px 4px 14px 0px #00000017;
+  font-size: 150%;
+  text-align: center;
+  border: none;
 }
 
 .formLogin button {
-    margin: 7px auto 28px;
-	width: 179px;
-	height: 36px;
-	border-radius: 60px;
-	background: #1D6154;
-	color: #FFFFFF;
-	font-family: Syne;
-	font-size: 14px;
+  margin: 7px auto 28px;
+  width: 179px;
+  height: 36px;
+  border-radius: 60px;
+  background: #1d6154;
+  color: #ffffff;
+  font-family: Syne;
+  font-size: 14px;
 }
 
 .formLogin a {
-	justify-content: center;
-	display: flex;
-	text-decoration: underline;
+  justify-content: center;
+  display: flex;
+  text-decoration: underline;
 }
 
 button.filter-button {
-    width: auto;
-    height: 37px;
-    border-radius: 60px;
-    color: #1D6154;
-    background-color: transparent;
-    border: 1px solid #1D6154;
-    font-family: Syne;
-    font-size: 16px;
-    font-weight: 700;
-    line-height: 19px;
-    letter-spacing: 0em;
-    text-align: center;
-    padding: 0px 1%;
+  width: auto;
+  height: 37px;
+  border-radius: 60px;
+  color: #1d6154;
+  background-color: transparent;
+  border: 1px solid #1d6154;
+  font-family: Syne;
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 19px;
+  letter-spacing: 0em;
+  text-align: center;
+  padding: 0px 1%;
 }
 
 button.filter-button:hover {
-	background: #1D6154;
-	color: white;
-	cursor: pointer;
+  background: #1d6154;
+  color: white;
+  cursor: pointer;
 }
 
-.formLogin button:hover, input[type="submit"]:hover {
-	background: black;
-	color: white;
-}	
+.formLogin button:hover,
+input[type="submit"]:hover {
+  background: black;
+  color: white;
+}
 
 #contact {
-	width: 50%;
-margin: auto;
+  width: 50%;
+  margin: auto;
 }
 #contact > * {
-	text-align: center;
-
+  text-align: center;
 }
-#contact h2{
-	margin-bottom: 20px;
+#contact h2 {
+  margin-bottom: 20px;
 }
 #contact form {
-	text-align: left;
-	margin-top:30px;
-	display: flex;
-	flex-direction: column;
+  text-align: left;
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
 }
 
 #contact input {
-	height: 50px;
-	font-size: 1.2em;
-	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+  height: 50px;
+  font-size: 1.2em;
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 #contact label {
-	margin: 2em 0 1em 0;
+  margin: 2em 0 1em 0;
 }
 #contact textarea {
-	border: none;
-	box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
+  border: none;
+  box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
 
-input[type="submit"]{
-	font-family: 'Syne';
-	font-weight: 700;
-	color: white;
-	background-color: #1D6154;
-	margin : 2em auto ;
-	width: 180px;
-	text-align: center;
-	border-radius: 60px ;
+input[type="submit"] {
+  font-family: "Syne";
+  font-weight: 700;
+  color: white;
+  background-color: #1d6154;
+  margin: 2em auto;
+  width: 180px;
+  text-align: center;
+  border-radius: 60px;
 }
 
 footer nav ul {
-	display: flex;
-	justify-content: flex-end;
-	margin: 2em;
-	height: 60px;
+  display: flex;
+  justify-content: flex-end;
+  margin: 2em;
+  height: 60px;
 }
 
 li img:hover {
-	filter: drop-shadow(1px 1px 0 black)
+  filter: drop-shadow(1px 1px 0 black);
 }

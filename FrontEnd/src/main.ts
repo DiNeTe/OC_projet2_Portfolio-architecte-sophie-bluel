@@ -54,7 +54,21 @@ async function getCategories() {
       throw new Error("Network response was not ok " + response.statusText);
     }
     const categories: Category[] = await response.json(); // Converti la réponse en JSON
-    createFilterButtons(categories); // Crée les boutons de filtre avec les catégories récupérées
+
+    // Vérifie la présence du token avant de créer les boutons filtres
+    const userToken = localStorage.getItem("userToken");
+    if (!userToken) {
+      createFilterButtons(categories);
+
+      let btnSVG = document.getElementById("btnSVG");
+      if (btnSVG) {
+        btnSVG.style.display = "none";
+        let txtModif = document.getElementById("txtModif");
+        if (txtModif) {
+          txtModif.innerText = "";
+        }
+      }
+    }
   } catch (error) {
     console.error("There has been a problem with your fetch operation:", error);
   }
@@ -105,10 +119,46 @@ function filterGallery(category: "all" | Category) {
   }
 }
 
+const userToken = localStorage.getItem("userToken");
+
+// Fonction pour changer le texte de login en logout
+function logoLogout() {
+  const loginLogout = document.querySelector("nav a");
+  if (userToken && loginLogout) {
+    loginLogout.textContent = "logout";
+  } else {
+    console.log("no");
+  }
+}
+
+// Fonction pour reset userToken aprés logout
 document.addEventListener("DOMContentLoaded", function () {
+  if (userToken) {
+    console.log("Token:", userToken);
+  } else {
+    console.log("Aucun token trouvé");
+  }
   loadWorks();
   getCategories();
+  logoLogout();
+  // }
 });
 
+//  check si le token est dans le local storage
+function checkTokenPresence() {
+  setInterval(() => {
+    const userToken = localStorage.getItem("userToken");
+    if (userToken) {
+      console.log("Token présent:", userToken);
+    } else {
+      console.log("Token absent");
+    }
+  }, 5000); // Vérifie toutes les 5 secondes
+}
+
+checkTokenPresence();
+{
+}
+
 // appel à la fonction loadWorks et initialisation
-loadWorks();
+// loadWorks();
