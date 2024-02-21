@@ -50,28 +50,24 @@ document
       // Stocke le token et redirige si la connexion est réussie
       if (data.token) {
         localStorage.setItem("userToken", data.token);
-        window.location.href = "/index.html"; // Remplacer par le chemin réel
-      } else {
-        throw new Error("Token not received");
+        window.location.href = "/index.html";
       }
-
-      console.log("Token:", data.token);
     } catch (error) {
       // Affiche une alerte en cas d'erreur
-      alert("erroError connecting : " + error.message);
+      alert("E-mail ou mot de passe incorrect");
     }
   });
 
-//  check si le token est dans le local storage
-function checkTokenPresence() {
-  setInterval(() => {
-    const userToken = localStorage.getItem("userToken");
-    if (userToken) {
-      console.log("Token présent:", userToken);
-    } else {
-      console.log("Token absent");
-    }
-  }, 5000); // Vérifie toutes les 5 secondes
-}
+// //  check si le token est dans le local storage
+// function checkTokenPresence() {
+//   setInterval(() => {
+//     const userToken = localStorage.getItem("userToken");
+//     if (userToken) {
+//       console.log("Token présent:", userToken);
+//     } else {
+//       console.log("Token absent");
+//     }
+//   }, 5000); // Vérifie toutes les 5 secondes
+// }
 
-checkTokenPresence();
+// checkTokenPresence();

@@ -63,9 +63,9 @@ async function getCategories() {
       let btnSVG = document.getElementById("btnSVG");
       if (btnSVG) {
         btnSVG.style.display = "none";
-        let txtModif = document.getElementById("txtModif");
-        if (txtModif) {
-          txtModif.innerText = "";
+        let optionEdit = document.getElementById("option-edit");
+        if (optionEdit) {
+          optionEdit.innerText = "";
         }
       }
     }
@@ -124,10 +124,57 @@ const userToken = localStorage.getItem("userToken");
 // Fonction pour changer le texte de login en logout
 function logoLogout() {
   const loginLogout = document.querySelector("nav a");
-  if (userToken && loginLogout) {
+  // verifie si la constante loginLogout est null (evite erreur loginLogout.textContent)
+  if (!loginLogout) {
+    console.log("Lien de connexion/déconnexion non trouvé");
+    return;
+  }
+
+  if (userToken) {
     loginLogout.textContent = "logout";
   } else {
-    console.log("no");
+    loginLogout.textContent = "login";
+  }
+}
+
+// Sélection des éléments pour la modale
+const modal = document.getElementById("modal");
+const modalOverlay = document.getElementById("modal-overlay");
+const closeButton = document.querySelector(".close-button");
+
+// Fonction pour ouvrir la modale
+function openModal() {
+  let optionEdit = document.getElementById("option-edit");
+  optionEdit?.addEventListener("click", function () {
+    modal?.classList.add("active");
+    modalOverlay?.classList.add("active");
+    renderGalleryModal();
+  });
+}
+
+// Fonction pour fermer la modale
+function closeModal() {
+  let closeBtn = document.querySelector(".close-button");
+  closeBtn?.addEventListener("click", function () {
+    modal?.classList.remove("active");
+    modalOverlay?.classList.remove("active");
+  });
+}
+
+// Fonction pour voir les travaux actuels dans la modale
+function renderGalleryModal() {
+  const modalContent = document.createElement("div");
+
+  allWorks.forEach((work) => {
+    const imgElement = document.createElement("img");
+    imgElement.src = work.imageUrl;
+    modalContent.appendChild(imgElement);
+  });
+
+  const galleryModal = document.getElementById("gallery-modal");
+  if (galleryModal) {
+    galleryModal.innerHTML = "";
+    galleryModal.appendChild(modalContent);
   }
 }
 
@@ -141,24 +188,29 @@ document.addEventListener("DOMContentLoaded", function () {
   loadWorks();
   getCategories();
   logoLogout();
+  openModal();
+  closeModal();
   // }
 });
 
-//  check si le token est dans le local storage
-function checkTokenPresence() {
-  setInterval(() => {
-    const userToken = localStorage.getItem("userToken");
-    if (userToken) {
-      console.log("Token présent:", userToken);
-    } else {
-      console.log("Token absent");
-    }
-  }, 5000); // Vérifie toutes les 5 secondes
-}
+const btnModif = document.getElementById("btn-modif");
+btnModif?.addEventListener("click", function () {
+  ;
+})
 
-checkTokenPresence();
-{
-}
+//  check si le token est dans le local storage
+// function checkTokenPresence() {
+//   setInterval(() => {
+//     const userToken = localStorage.getItem("userToken");
+//     if (userToken) {
+//       console.log("Token présent:", userToken);
+//     } else {
+//       console.log("Token absent");
+//     }
+//   }, 5000); // Vérifie toutes les 5 secondes
+// }
+
+// checkTokenPresence();
 
 // appel à la fonction loadWorks et initialisation
 // loadWorks();
