@@ -70,7 +70,7 @@ async function getCategories() {
       }
     }
   } catch (error) {
-    console.error("There has been a problem with your fetch operation:", error);
+    console.error("There has been a problem with fetch operation:", error);
   }
 }
 
@@ -123,13 +123,12 @@ const userToken = localStorage.getItem("userToken");
 
 // Fonction pour changer le texte de login en logout
 function logoLogout() {
-  const loginLogout = document.querySelector("nav a");
+  const loginLogout = document.querySelector("nav a") as HTMLLIElement | null;
   // verifie si la constante loginLogout est null (evite erreur loginLogout.textContent)
   if (!loginLogout) {
     console.log("Lien de connexion/déconnexion non trouvé");
-    return;
+    return; // arrette la fonction
   }
-
   if (userToken) {
     loginLogout.textContent = "logout";
   } else {
@@ -137,18 +136,172 @@ function logoLogout() {
   }
 }
 
-// Sélection des éléments pour la modale
-const modal = document.getElementById("modal");
-const modalOverlay = document.getElementById("modal-overlay");
-const closeButton = document.querySelector(".close-button");
+// MODALE
 
-// Fonction pour ouvrir la modale
+// Fonction pour afficher le contenu "galerie" dans la modale
+function renderGalleryModal() {
+  const modalContent = document.createElement("div");
+  allWorks.forEach((work) => {
+    const imgElement = document.createElement("img");
+    imgElement.src = work.imageUrl;
+    modalContent.appendChild(imgElement);
+  });
+  const modalContainer =
+    document.querySelector<HTMLDivElement>(".gallery-modal");
+  modalContainer!.innerHTML = "";
+  modalContainer?.appendChild(modalContent);
+  modalBtnEdit.value = "Ajouter une photo";
+}
+
+// selectionne la Div upload-content
+const uploadContentDiv = document.getElementById(
+  "upload-content"
+) as HTMLDivElement;
+
+// Fonction pour afficher le contenu "Ajout photo" dans la modale
+function renderUploadModal() {
+  uploadContentDiv.innerHTML = "";
+
+  // Crée la div img-preview
+  const imgPreview = document.createElement("div");
+  imgPreview.className = "img-preview";
+  imgPreview.id = "img-preview";
+  // Crée les éléments pour la div upload-img
+  const imgPreviewLoaded = document.createElement("img");
+  // Ajoute les nouveaux éléments à la div 'uploadImgDiv'
+  imgPreview.appendChild(imgPreviewLoaded);
+
+  // Crée la div upload-img
+  const uploadImgDiv = document.createElement("div");
+  uploadImgDiv.className = "upload-img";
+  uploadImgDiv.id = "upload-img";
+  // Crée les éléments pour la div upload-img
+  const img = document.createElement("img"); // mettre SVG
+  const uploadButton = document.createElement("button");
+  uploadButton.className = "upload-img-btn";
+  uploadButton.textContent = "+ Ajouter photo";
+  uploadButton.onclick = () =>
+    document.getElementById("upload-img-input")?.click();
+  const inputFile = document.createElement("input");
+  inputFile.type = "file";
+  inputFile.id = "upload-img-input";
+  inputFile.name = "upload-img-input";
+  inputFile.accept = "image/*";
+  // Ajoute les nouveaux éléments à la div 'uploadImgDiv'
+  uploadImgDiv.appendChild(img);
+  uploadImgDiv.appendChild(uploadButton);
+  uploadImgDiv.appendChild(inputFile);
+
+  // Crée la div upload-form
+  const uploadFormDiv = document.createElement("div");
+  uploadFormDiv.id = "upload-form";
+  // Crée les éléments pour la div upload-form
+  const titleLabel = document.createElement("label");
+  titleLabel.setAttribute("for", "title");
+  titleLabel.textContent = "Titre";
+  const titleInput = document.createElement("input");
+  titleInput.className = "upload-form";
+  titleInput.type = "text";
+  titleInput.id = "title";
+  titleInput.name = "title";
+  const categoryLabel = document.createElement("label");
+  categoryLabel.setAttribute("for", "category");
+  categoryLabel.textContent = "Catégorie";
+  const breakElement = document.createElement("br");
+  const categorySelect = document.createElement("select");
+  categorySelect.className = "upload-form";
+  categorySelect.id = "category";
+  categorySelect.name = "category";
+  // Ajoute les nouveaux éléments à la div 'upload-form'
+  uploadFormDiv.appendChild(titleLabel);
+  uploadFormDiv.appendChild(titleInput);
+  uploadFormDiv.appendChild(categoryLabel);
+  uploadFormDiv.appendChild(breakElement);
+  uploadFormDiv.appendChild(categorySelect);
+
+  // Ajoute les nouveaux éléments à la div 'upload-content'
+  uploadContentDiv.appendChild(imgPreview);
+  uploadContentDiv.appendChild(uploadImgDiv);
+  uploadContentDiv.appendChild(uploadFormDiv);
+}
+
+// Sélection des éléments fixe pour la modale
+
+const arrowModal = document.getElementById("arrow-modal");
+
+const titleModal = document.getElementById(
+  "title-modal"
+) as HTMLDivElement | null;
+
+const closeButton = document.querySelector(
+  ".close-button"
+) as HTMLSpanElement | null;
+
+const modalOverlay = document.getElementById(
+  "modal-overlay"
+) as HTMLDivElement | null;
+
+const modal = document.getElementById("modal") as HTMLDivElement | null;
+
+const modalContent = document.getElementById(
+  "modal-content"
+) as HTMLDivElement | null;
+
+const galleryModal = document.getElementById(
+  "gallery-modal"
+) as HTMLDivElement | null;
+
+const uploadContent = document.getElementById(
+  "upload-content"
+) as HTMLDivElement | null;
+
+const modalBtnEdit = document.getElementById("btn-edit") as HTMLInputElement;
+
+// Fonction pour ouvrir le contenu "Galerie" dans la modale
 function openModal() {
   let optionEdit = document.getElementById("option-edit");
   optionEdit?.addEventListener("click", function () {
-    modal?.classList.add("active");
     modalOverlay?.classList.add("active");
+    modal?.classList.add("active");
+    galleryModal?.classList.add("active");
+    arrowModal?.classList.remove("active");
+
     renderGalleryModal();
+  });
+}
+
+// Fonction pour ouvrir le contenu "Ajout photo" dans la modale
+function addPhotoModal() {
+  let addPhoto = document.getElementById("btn-edit");
+  addPhoto?.addEventListener("click", function () {
+    console.log("click ajout photo ok");
+    galleryModal?.classList.remove("active");
+    arrowModal?.classList.add("active");
+    uploadContent?.classList.add("active");
+    galleryModal!.innerHTML = "";
+    titleModal!.textContent = "Ajout Photo";
+    modalBtnEdit.value = "Valider";
+    renderUploadModal();
+    categorySelect();
+  });
+}
+
+// fonction pour remplir le select "catégorie"
+function categorySelect() {
+  const category = document.getElementById("category") as HTMLSelectElement;
+  // Constante pour suivre les categories et eviter les doublons
+  const addedCategories: { [key: number]: boolean } = {};
+
+  allWorks.forEach((work) => {
+    // vérifie si l'ID de la catégorie n'a pas encore été ajouté à l'élément select
+    if (!addedCategories[work.category.id]) {
+      const option = new Option(
+        work.category.name,
+        work.category.id.toString()
+      );
+      category.add(option);
+      addedCategories[work.category.id] = true;
+    }
   });
 }
 
@@ -158,25 +311,56 @@ function closeModal() {
   closeBtn?.addEventListener("click", function () {
     modal?.classList.remove("active");
     modalOverlay?.classList.remove("active");
+    galleryModal?.classList.remove("active");
+    modalContent?.classList.remove("active");
+    titleModal!.textContent = "Galerie photo";
+    modalBtnEdit.value = "Valider";
+    uploadContentDiv.innerHTML = "";
   });
 }
 
-// Fonction pour voir les travaux actuels dans la modale
-function renderGalleryModal() {
-  const modalContent = document.createElement("div");
+// function arrowReturn() {
+//   let arrow = document.getElementById("arrow.modal");
+//   arrow?.addEventListener("click"),fuction() {
+//     openModal();
+//   }
+// }
 
-  allWorks.forEach((work) => {
-    const imgElement = document.createElement("img");
-    imgElement.src = work.imageUrl;
-    modalContent.appendChild(imgElement);
-  });
+// Envoi d’un nouveau projet au back-end via le formulaire de la modale
 
-  const galleryModal = document.getElementById("gallery-modal");
-  if (galleryModal) {
-    galleryModal.innerHTML = "";
-    galleryModal.appendChild(modalContent);
-  }
-}
+// async function sendFormData() {
+//   const titleElement = document.getElementById("title");
+
+//   if (!titleElement) {
+//     console.log("L'élément 'title' est introuvable.");
+//     return;
+//   }
+
+//   const titleValue = (titleElement as HTMLInputElement).value;
+
+//   if (!titleValue) {
+//     console.log("Veuillez remplir tous les champs");
+//     return;
+//   }
+
+//   try {
+//     const response = await fetch('http://localhost:5678/api/works', {
+//       method: "POST",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//       body: JSON.stringify({
+//         "title": titleValue,
+//       })
+//     });
+
+//     if (!response.ok) {
+//       throw new Error("Erreur réponse API works");
+//     } } catch (error) {
+//       console.error(error);
+//     }  }
+
+// Fin Modale
 
 // Fonction pour reset userToken aprés logout
 document.addEventListener("DOMContentLoaded", function () {
@@ -190,27 +374,5 @@ document.addEventListener("DOMContentLoaded", function () {
   logoLogout();
   openModal();
   closeModal();
-  // }
+  addPhotoModal();
 });
-
-const btnModif = document.getElementById("btn-modif");
-btnModif?.addEventListener("click", function () {
-  ;
-})
-
-//  check si le token est dans le local storage
-// function checkTokenPresence() {
-//   setInterval(() => {
-//     const userToken = localStorage.getItem("userToken");
-//     if (userToken) {
-//       console.log("Token présent:", userToken);
-//     } else {
-//       console.log("Token absent");
-//     }
-//   }, 5000); // Vérifie toutes les 5 secondes
-// }
-
-// checkTokenPresence();
-
-// appel à la fonction loadWorks et initialisation
-// loadWorks();
