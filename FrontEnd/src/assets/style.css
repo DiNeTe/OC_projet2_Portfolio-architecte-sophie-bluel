@@ -471,6 +471,10 @@ li img:hover {
   flex-direction: column;
 }
 
+#img-preview-loaded {
+  max-width: 300px;
+}
+
 .gallery-modal,
 .arrow-modal,
 .modal-content,

@@ -26,6 +26,13 @@ async function loadWorks() {
   }
 }
 
+function getMaxWorkId(works: any[]) {
+  return works.reduce(
+    (maxId: number, work: { id: number }) => Math.max(maxId, work.id),
+    0
+  );
+}
+
 function renderGallery(works: Work[]) {
   const gallery = document.querySelector(".gallery");
 
@@ -138,7 +145,7 @@ function logoLogout() {
 
 // MODALE
 
-// Fonction pour afficher le contenu "galerie" dans la modale
+// Fonction pour afficher le contenu "galerie"
 function renderGalleryModal() {
   const modalContent = document.createElement("div");
   allWorks.forEach((work) => {
@@ -158,7 +165,7 @@ const uploadContentDiv = document.getElementById(
   "upload-content"
 ) as HTMLDivElement;
 
-// Fonction pour afficher le contenu "Ajout photo" dans la modale
+// Fonction pour afficher le contenu "Ajout photo"
 function renderUploadModal() {
   uploadContentDiv.innerHTML = "";
 
@@ -168,6 +175,7 @@ function renderUploadModal() {
   imgPreview.id = "img-preview";
   // Crée les éléments pour la div upload-img
   const imgPreviewLoaded = document.createElement("img");
+  imgPreviewLoaded.id = "img-preview-loaded";
   // Ajoute les nouveaux éléments à la div 'uploadImgDiv'
   imgPreview.appendChild(imgPreviewLoaded);
 
@@ -274,7 +282,6 @@ function openModal() {
 function addPhotoModal() {
   let addPhoto = document.getElementById("btn-edit");
   addPhoto?.addEventListener("click", function () {
-    console.log("click ajout photo ok");
     galleryModal?.classList.remove("active");
     arrowModal?.classList.add("active");
     uploadContent?.classList.add("active");
@@ -283,6 +290,28 @@ function addPhotoModal() {
     modalBtnEdit.value = "Valider";
     renderUploadModal();
     categorySelect();
+    imagePreview();
+  });
+}
+
+function imagePreview() {
+  const inputElement = document.getElementById(
+    "upload-img-input"
+  ) as HTMLInputElement;
+  const imgPreview = document.getElementById(
+    "img-preview-loaded"
+  ) as HTMLImageElement;
+
+  inputElement?.addEventListener("change", function (event) {
+    console.log("image chargée");
+
+    const target = event.target as HTMLInputElement;
+    const file = target.files && target.files[0];
+
+    if (file) {
+      const imgURL = URL.createObjectURL(file);
+      imgPreview.src = imgURL;
+    }
   });
 }
 
@@ -305,6 +334,22 @@ function categorySelect() {
   });
 }
 
+// fonction pour le fonctionnement de la flêche retour dans la modale
+function arrowReturn() {
+  let arrow = document.getElementById("arrow-modal");
+  arrow?.addEventListener("click", function () {
+    console.log("click arrow");
+    galleryModal?.classList.add("active");
+    modalContent?.classList.remove("active");
+    titleModal!.textContent = "Galerie photo";
+    modalBtnEdit.value = "Ajouter photo";
+    uploadContentDiv?.classList.remove("active");
+    uploadContentDiv.innerHTML = "";
+    arrowModal?.classList.remove("active");
+    renderGalleryModal();
+  });
+}
+
 // Fonction pour fermer la modale
 function closeModal() {
   let closeBtn = document.querySelector(".close-button");
@@ -315,54 +360,81 @@ function closeModal() {
     modalContent?.classList.remove("active");
     titleModal!.textContent = "Galerie photo";
     modalBtnEdit.value = "Valider";
+    uploadContentDiv?.classList.remove("active");
     uploadContentDiv.innerHTML = "";
   });
 }
 
-// function arrowReturn() {
-//   let arrow = document.getElementById("arrow.modal");
-//   arrow?.addEventListener("click"),fuction() {
-//     openModal();
-//   }
-// }
+// Bouton "Ajouter une photo"
+let btnAddPhoto = document.getElementById("btn-edit");
+btnAddPhoto?.addEventListener("click", function () {
+  if (
+    galleryModal?.classList.contains("active") &&
+    !uploadContent?.classList.contains("active")
+  ) {
+    console.log('click btn "ajouter une photo" ok');
+  } else {
+    return;
+  }
+});
 
-// Envoi d’un nouveau projet au back-end via le formulaire de la modale
+// Bouton "valider l'envoi d'une photo"
+const btnValidation = document.getElementById("btn-edit");
+btnValidation?.addEventListener("click", function () {
+  if (
+    !galleryModal?.classList.contains("active") &&
+    uploadContent?.classList.contains("active")
+  ) {
+    const titleElement = document.getElementById("title") as HTMLInputElement;
+    const categoryElement = document.getElementById(
+      "category"
+    ) as HTMLSelectElement;
+    const imgElement = document.getElementById(
+      "upload-img-input"
+    ) as HTMLInputElement;
 
-// async function sendFormData() {
-//   const titleElement = document.getElementById("title");
+    const titleContent = titleElement.value;
+    const categoryContent = categoryElement.value;
+    const file = imgElement.files?.[0];
+    const maxId = getMaxWorkId(allWorks);
+    const newId = maxId + 1;
+    console.log(
+      newId,
+      titleElement.value,
+      categoryElement.value,
+      imgElement,
+      userToken
+    );
 
-//   if (!titleElement) {
-//     console.log("L'élément 'title' est introuvable.");
-//     return;
-//   }
+    if (titleElement.value && categoryElement.value && file) {
+      if (titleContent && categoryContent && file) {
+        const formData = new FormData();
+        formData.append("id", newId.toString());
+        formData.append("title", titleContent);
+        formData.append("imageUrl", file);
+        formData.append("categoryId", categoryElement.toString());
+        if (!userToken) {
+          return;
+        } else {
+          formData.append("userId", userToken.toString());
+        }
 
-//   const titleValue = (titleElement as HTMLInputElement).value;
+        fetch("http://localhost:5678/api/works", {
+          method: "Post",
+          body: formData,
+        });
+      }
 
-//   if (!titleValue) {
-//     console.log("Veuillez remplir tous les champs");
-//     return;
-//   }
-
-//   try {
-//     const response = await fetch('http://localhost:5678/api/works', {
-//       method: "POST",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify({
-//         "title": titleValue,
-//       })
-//     });
-
-//     if (!response.ok) {
-//       throw new Error("Erreur réponse API works");
-//     } } catch (error) {
-//       console.error(error);
-//     }  }
+      console.log('click btn "valider" ok');
+    } else {
+      alert("Veuillez remplir tous les champs avant d'ajouter une photo");
+    }
+  }
+});
 
 // Fin Modale
 
-// Fonction pour reset userToken aprés logout
+// reset userToken aprés logout
 document.addEventListener("DOMContentLoaded", function () {
   if (userToken) {
     console.log("Token:", userToken);
@@ -374,5 +446,6 @@ document.addEventListener("DOMContentLoaded", function () {
   logoLogout();
   openModal();
   closeModal();
+  arrowReturn();
   addPhotoModal();
 });
