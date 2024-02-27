@@ -148,15 +148,41 @@ function logoLogout() {
 // Fonction pour afficher le contenu "galerie"
 function renderGalleryModal() {
   const modalContent = document.createElement("div");
+  modalContent.classList.add("gallery-undo");
   allWorks.forEach((work) => {
+    const workContainer = document.createElement("div");
+    workContainer.classList.add("work-container");
+
+    const deleteIcon = document.createElement("div");
+    deleteIcon.classList.add("delete-icon");
+    deleteIcon.innerHTML = `
+      <svg width="9" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M2.71607 0.35558C2.82455 0.136607 3.04754 0 3.29063 0H5.70938C5.95246 0 6.17545 0.136607 6.28393 0.35558L6.42857 0.642857H8.35714C8.71272 0.642857 9 0.930134 9 1.28571C9 1.64129 8.71272 1.92857 8.35714 1.92857H0.642857C0.287277 1.92857 0 1.64129 0 1.28571C0 0.930134 0.287277 0.642857 0.642857 0.642857H2.57143L2.71607 0.35558ZM0.642857 2.57143H8.35714V9C8.35714 9.70915 7.78058 10.2857 7.07143 10.2857H1.92857C1.21942 10.2857 0.642857 9.70915 0.642857 9V2.57143ZM2.57143 3.85714C2.39464 3.85714 2.25 4.00179 2.25 4.17857V8.67857C2.25 8.85536 2.39464 9 2.57143 9C2.74821 9 2.89286 8.85536 2.89286 8.67857V4.17857C2.89286 4.00179 2.74821 3.85714 2.57143 3.85714ZM4.5 3.85714C4.32321 3.85714 4.17857 4.00179 4.17857 4.17857V8.67857C4.17857 8.85536 4.32321 9 4.5 9C4.67679 9 4.82143 8.85536 4.82143 8.67857V4.17857C4.82143 4.00179 4.67679 3.85714 4.5 3.85714ZM6.42857 3.85714C6.25179 3.85714 6.10714 4.00179 6.10714 4.17857V8.67857C6.10714 8.85536 6.25179 9 6.42857 9C6.60536 9 6.75 8.85536 6.75 8.67857V4.17857C6.75 4.00179 6.60536 3.85714 6.42857 3.85714Z" fill="white"/>
+      </svg>`;
+    deleteIcon.addEventListener("click", function () {
+      // logique pour supprimer le travail
+      console.log("Suppression du travail:", work.id);
+      // deleteWork(work.id); //
+    });
+
+    deleteIcon.classList.add("delete-icon");
+    deleteIcon.addEventListener("click", function () {
+      // requete API
+      // deleteWork(work.id); //
+    });
+    workContainer.appendChild(deleteIcon);
+
     const imgElement = document.createElement("img");
     imgElement.src = work.imageUrl;
-    modalContent.appendChild(imgElement);
+    workContainer.appendChild(imgElement);
+
+    modalContent.appendChild(workContainer);
   });
+
   const modalContainer =
-    document.querySelector<HTMLDivElement>(".gallery-modal");
-  modalContainer!.innerHTML = "";
-  modalContainer?.appendChild(modalContent);
+    (document.querySelector(".gallery-modal") as HTMLDivElement) || null;
+  modalContainer.innerHTML = "";
+  modalContainer.appendChild(modalContent);
   modalBtnEdit.value = "Ajouter une photo";
 }
 
@@ -201,8 +227,8 @@ function renderUploadModal() {
   uploadImgDiv.appendChild(inputFile);
 
   // Crée la div upload-form
-  const uploadFormDiv = document.createElement("div");
-  uploadFormDiv.id = "upload-form";
+  const uploadForm = document.createElement("form");
+  uploadForm.id = "upload-form";
   // Crée les éléments pour la div upload-form
   const titleLabel = document.createElement("label");
   titleLabel.setAttribute("for", "title");
@@ -221,16 +247,16 @@ function renderUploadModal() {
   categorySelect.id = "category";
   categorySelect.name = "category";
   // Ajoute les nouveaux éléments à la div 'upload-form'
-  uploadFormDiv.appendChild(titleLabel);
-  uploadFormDiv.appendChild(titleInput);
-  uploadFormDiv.appendChild(categoryLabel);
-  uploadFormDiv.appendChild(breakElement);
-  uploadFormDiv.appendChild(categorySelect);
+  uploadForm.appendChild(titleLabel);
+  uploadForm.appendChild(titleInput);
+  uploadForm.appendChild(categoryLabel);
+  uploadForm.appendChild(breakElement);
+  uploadForm.appendChild(categorySelect);
 
   // Ajoute les nouveaux éléments à la div 'upload-content'
   uploadContentDiv.appendChild(imgPreview);
   uploadContentDiv.appendChild(uploadImgDiv);
-  uploadContentDiv.appendChild(uploadFormDiv);
+  uploadContentDiv.appendChild(uploadForm);
 }
 
 // Sélection des éléments fixe pour la modale
@@ -280,8 +306,7 @@ function openModal() {
 
 // Fonction pour ouvrir le contenu "Ajout photo" dans la modale
 function addPhotoModal() {
-  let addPhoto = document.getElementById("btn-edit");
-  addPhoto?.addEventListener("click", function () {
+  modalBtnEdit?.addEventListener("click", function () {
     galleryModal?.classList.remove("active");
     arrowModal?.classList.add("active");
     uploadContent?.classList.add("active");
@@ -365,30 +390,26 @@ function closeModal() {
   });
 }
 
-// Bouton "Ajouter une photo"
-let btnAddPhoto = document.getElementById("btn-edit");
-btnAddPhoto?.addEventListener("click", function () {
-  if (
-    galleryModal?.classList.contains("active") &&
-    !uploadContent?.classList.contains("active")
-  ) {
-    console.log('click btn "ajouter une photo" ok');
-  } else {
-    return;
-  }
-});
-//
-//
-//
-//
-// Bouton "valider l'envoi d'une photo"
-const btnValidation = document.getElementById("btn-edit");
-btnValidation?.addEventListener("click", async function () {
-  // Gestion du bouton "valider"
+// // Test bouton "Ajouter une photo / Valider"
+// modalBtnEdit?.addEventListener("click", function () {
+//   if (
+//     galleryModal?.classList.contains("active") &&
+//     !uploadContent?.classList.contains("active")
+//   ) {
+//     console.log('click btn "ajouter une photo" ok');
+//   } else {
+//     console.log('click btn "Valider" ok');
+//   }
+// });
+
+// Action du bouton "valider" dans le formulaire "Ajout photo"
+modalBtnEdit?.addEventListener("click", async function () {
+  // if-1 = Vérifie si il s'agit bien du bouton "Valider"
   if (
     !galleryModal?.classList.contains("active") &&
     uploadContent?.classList.contains("active")
   ) {
+    // Si if-1 OK, crée des constantes pour sélectionner les élèments du formulaire
     const titleElement = document.getElementById("title") as HTMLInputElement;
     const categoryElement = document.getElementById(
       "category"
@@ -401,51 +422,54 @@ btnValidation?.addEventListener("click", async function () {
     const categoryContent = categoryElement.value;
     const file = imgElement.files?.[0];
 
+    // verifie les entrées du formulaire par des console.log
     console.log(
-      // newId,
-      titleElement.value,
-      categoryElement.value,
-      File,
-      userToken
+      !titleElement.value ? "titre : aucun" : "titre : ",
+      titleElement.value
     );
+    console.log("N° de catégorie : ", categoryElement.value);
+    console.log(
+      !imgElement.files?.[0] ? "Image : aucune image selectionnée" : "Image : ",
+      imgElement.files?.[0]
+    );
+    console.log("User Token : ", userToken);
 
-    if (titleElement.value && categoryElement.value && file) {
-      if (titleContent && categoryContent && file) {
-        const formData = new FormData();
+    // if-1.1 = vérifie si les entrées du formulaire sont remplies
+    if (titleContent && categoryContent && file) {
+      const formData = new FormData();
 
-        formData.append("title", titleContent);
-        formData.append("image", file);
-        formData.append("category", categoryContent);
+      // si if-1.1 OK, crée le formData
+      formData.append("title", titleContent);
+      formData.append("image", file);
+      formData.append("category", categoryContent);
 
-        try {
-          const response = await fetch("http://localhost:5678/api/works", {
-            method: "Post",
-            headers: { Authorization: `Bearer ${userToken}` },
-            body: formData,
-          });
+      // Envoi de la requête API
+      try {
+        const response = await fetch("http://localhost:5678/api/works", {
+          method: "Post",
+          headers: { Authorization: `Bearer ${userToken}` },
+          body: formData,
+        });
 
-          console.log('click btn "valider" ok');
+        console.log('click btn "valider" ok');
 
-          if (!response.ok) {
-            throw new Error(`Erreur HTTP : ${response.status}`);
-          }
-
-          const result = await response.json();
-          console.log(result);
-        } catch (error) {
-          console.error("Erreur lors de l'envoi des données :", error);
-          // Gestion des erreurs
+        // if-1.3 = vérifie la réponse de l'API
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP : ${response.status}`);
         }
+
+        // const result = await response.json();
+        // console.log(result);
+      } catch (error) {
+        console.error("Erreur lors de l'envoi des données :", error);
       }
-    } else {
+    }
+    // if-1.1 (si toutes les entrées du formulaire ne sont pas remplies)
+    else {
       alert("Veuillez remplir tous les champs avant d'ajouter une photo");
     }
   }
 });
-//
-//
-//
-//
 // Fin Modale
 
 // reset userToken aprés logout
