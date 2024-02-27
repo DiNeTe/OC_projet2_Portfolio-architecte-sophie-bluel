@@ -377,10 +377,14 @@ btnAddPhoto?.addEventListener("click", function () {
     return;
   }
 });
-
+//
+//
+//
+//
 // Bouton "valider l'envoi d'une photo"
 const btnValidation = document.getElementById("btn-edit");
-btnValidation?.addEventListener("click", function () {
+btnValidation?.addEventListener("click", async function () {
+  // Gestion du bouton "valider"
   if (
     !galleryModal?.classList.contains("active") &&
     uploadContent?.classList.contains("active")
@@ -396,42 +400,52 @@ btnValidation?.addEventListener("click", function () {
     const titleContent = titleElement.value;
     const categoryContent = categoryElement.value;
     const file = imgElement.files?.[0];
-    const maxId = getMaxWorkId(allWorks);
-    const newId = maxId + 1;
+
     console.log(
-      newId,
+      // newId,
       titleElement.value,
       categoryElement.value,
-      imgElement,
+      File,
       userToken
     );
 
     if (titleElement.value && categoryElement.value && file) {
       if (titleContent && categoryContent && file) {
         const formData = new FormData();
-        formData.append("id", newId.toString());
+
         formData.append("title", titleContent);
-        formData.append("imageUrl", file);
-        formData.append("categoryId", categoryElement.toString());
-        if (!userToken) {
-          return;
-        } else {
-          formData.append("userId", userToken.toString());
+        formData.append("image", file);
+        formData.append("category", categoryContent);
+
+        try {
+          const response = await fetch("http://localhost:5678/api/works", {
+            method: "Post",
+            headers: { Authorization: `Bearer ${userToken}` },
+            body: formData,
+          });
+
+          console.log('click btn "valider" ok');
+
+          if (!response.ok) {
+            throw new Error(`Erreur HTTP : ${response.status}`);
+          }
+
+          const result = await response.json();
+          console.log(result);
+        } catch (error) {
+          console.error("Erreur lors de l'envoi des données :", error);
+          // Gestion des erreurs
         }
-
-        fetch("http://localhost:5678/api/works", {
-          method: "Post",
-          body: formData,
-        });
       }
-
-      console.log('click btn "valider" ok');
     } else {
       alert("Veuillez remplir tous les champs avant d'ajouter une photo");
     }
   }
 });
-
+//
+//
+//
+//
 // Fin Modale
 
 // reset userToken aprés logout
