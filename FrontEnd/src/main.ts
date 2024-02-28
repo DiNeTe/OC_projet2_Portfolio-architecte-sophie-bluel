@@ -16,6 +16,7 @@ type Work = {
 
 let allWorks: Work[] = []; // Variable globale pour stocker tous les travaux
 
+// Fonction pour afficher toute la gallerie
 async function loadWorks() {
   try {
     const response = await fetch("http://localhost:5678/api/works");
@@ -24,13 +25,6 @@ async function loadWorks() {
   } catch (error) {
     console.error("Erreur lors de la récupération des travaux:", error);
   }
-}
-
-function getMaxWorkId(works: any[]) {
-  return works.reduce(
-    (maxId: number, work: { id: number }) => Math.max(maxId, work.id),
-    0
-  );
 }
 
 function renderGallery(works: Work[]) {
@@ -145,6 +139,36 @@ function logoLogout() {
 
 // MODALE
 
+// Sélection des éléments fixe pour la modale
+
+const modalOverlay = document.getElementById(
+  "modal-overlay"
+) as HTMLDivElement | null;
+
+const modal = document.getElementById("modal") as HTMLDivElement | null;
+
+const titleModal = document.getElementById(
+  "title-modal"
+) as HTMLDivElement | null;
+
+const closeButton = document.querySelector(
+  ".close-button"
+) as HTMLSpanElement | null;
+
+const galleryModal = document.getElementById(
+  "gallery-modal"
+) as HTMLDivElement | null;
+
+const uploadContent = document.getElementById(
+  "upload-content"
+) as HTMLDivElement | null;
+
+const arrowModal = document.getElementById("arrow-modal");
+
+const modalBtnEdit = document.getElementById("btn-edit") as HTMLInputElement;
+
+// Fonctions MODALE
+
 // Fonction pour afficher le contenu "galerie"
 function renderGalleryModal() {
   const modalContent = document.createElement("div");
@@ -159,17 +183,35 @@ function renderGalleryModal() {
       <svg width="9" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.71607 0.35558C2.82455 0.136607 3.04754 0 3.29063 0H5.70938C5.95246 0 6.17545 0.136607 6.28393 0.35558L6.42857 0.642857H8.35714C8.71272 0.642857 9 0.930134 9 1.28571C9 1.64129 8.71272 1.92857 8.35714 1.92857H0.642857C0.287277 1.92857 0 1.64129 0 1.28571C0 0.930134 0.287277 0.642857 0.642857 0.642857H2.57143L2.71607 0.35558ZM0.642857 2.57143H8.35714V9C8.35714 9.70915 7.78058 10.2857 7.07143 10.2857H1.92857C1.21942 10.2857 0.642857 9.70915 0.642857 9V2.57143ZM2.57143 3.85714C2.39464 3.85714 2.25 4.00179 2.25 4.17857V8.67857C2.25 8.85536 2.39464 9 2.57143 9C2.74821 9 2.89286 8.85536 2.89286 8.67857V4.17857C2.89286 4.00179 2.74821 3.85714 2.57143 3.85714ZM4.5 3.85714C4.32321 3.85714 4.17857 4.00179 4.17857 4.17857V8.67857C4.17857 8.85536 4.32321 9 4.5 9C4.67679 9 4.82143 8.85536 4.82143 8.67857V4.17857C4.82143 4.00179 4.67679 3.85714 4.5 3.85714ZM6.42857 3.85714C6.25179 3.85714 6.10714 4.00179 6.10714 4.17857V8.67857C6.10714 8.85536 6.25179 9 6.42857 9C6.60536 9 6.75 8.85536 6.75 8.67857V4.17857C6.75 4.00179 6.60536 3.85714 6.42857 3.85714Z" fill="white"/>
       </svg>`;
-    deleteIcon.addEventListener("click", function () {
-      // logique pour supprimer le travail
-      console.log("Suppression du travail:", work.id);
-      // deleteWork(work.id); //
+    // Supression d'une photo de la gallerie
+    deleteIcon.addEventListener("click", async function () {
+      console.log("ID selectionnée :", work.id);
+      const confirmWindows = confirm("Confirmer la suppression ?");
+
+      if (confirmWindows) {
+        console.log("réponse de la fenêtre de confirmation : ", confirmWindows);
+
+        try {
+          const url = `http://localhost:5678/api/works/${work.id}`; // Utilise les backticks et ${work.id}
+          const response = await fetch(url, {
+            method: "DELETE",
+            headers: { Authorization: `Bearer ${userToken}` },
+          });
+
+          console.log("URL API : ", url);
+          console.log(response);
+
+          if (!response.ok) {
+            throw new Error(`Erreur HTTP : ${response.status}`);
+          } else {
+            galleryModal!.innerHTML = "";
+          }
+        } catch (error) {
+          console.error("Erreur lors de la suppression du travail :", error);
+        }
+      }
     });
 
-    deleteIcon.classList.add("delete-icon");
-    deleteIcon.addEventListener("click", function () {
-      // requete API
-      // deleteWork(work.id); //
-    });
     workContainer.appendChild(deleteIcon);
 
     const imgElement = document.createElement("img");
@@ -186,14 +228,12 @@ function renderGalleryModal() {
   modalBtnEdit.value = "Ajouter une photo";
 }
 
-// selectionne la Div upload-content
-const uploadContentDiv = document.getElementById(
-  "upload-content"
-) as HTMLDivElement;
-
 // Fonction pour afficher le contenu "Ajout photo"
 function renderUploadModal() {
-  uploadContentDiv.innerHTML = "";
+  if (!uploadContent) {
+    return;
+  }
+  uploadContent.innerHTML = "";
 
   // Crée la div img-preview
   const imgPreview = document.createElement("div");
@@ -246,60 +286,29 @@ function renderUploadModal() {
   categorySelect.className = "upload-form";
   categorySelect.id = "category";
   categorySelect.name = "category";
+  const categorySelectEmpty = document.createElement("option");
+  categorySelectEmpty.value = "";
+  categorySelect.appendChild(categorySelectEmpty);
   // Ajoute les nouveaux éléments à la div 'upload-form'
   uploadForm.appendChild(titleLabel);
   uploadForm.appendChild(titleInput);
   uploadForm.appendChild(categoryLabel);
   uploadForm.appendChild(breakElement);
   uploadForm.appendChild(categorySelect);
-
   // Ajoute les nouveaux éléments à la div 'upload-content'
-  uploadContentDiv.appendChild(imgPreview);
-  uploadContentDiv.appendChild(uploadImgDiv);
-  uploadContentDiv.appendChild(uploadForm);
+  uploadContent.appendChild(imgPreview);
+  uploadContent.appendChild(uploadImgDiv);
+  uploadContent.appendChild(uploadForm);
 }
-
-// Sélection des éléments fixe pour la modale
-
-const arrowModal = document.getElementById("arrow-modal");
-
-const titleModal = document.getElementById(
-  "title-modal"
-) as HTMLDivElement | null;
-
-const closeButton = document.querySelector(
-  ".close-button"
-) as HTMLSpanElement | null;
-
-const modalOverlay = document.getElementById(
-  "modal-overlay"
-) as HTMLDivElement | null;
-
-const modal = document.getElementById("modal") as HTMLDivElement | null;
-
-const modalContent = document.getElementById(
-  "modal-content"
-) as HTMLDivElement | null;
-
-const galleryModal = document.getElementById(
-  "gallery-modal"
-) as HTMLDivElement | null;
-
-const uploadContent = document.getElementById(
-  "upload-content"
-) as HTMLDivElement | null;
-
-const modalBtnEdit = document.getElementById("btn-edit") as HTMLInputElement;
 
 // Fonction pour ouvrir le contenu "Galerie" dans la modale
 function openModal() {
-  let optionEdit = document.getElementById("option-edit");
+  const optionEdit = document.getElementById("option-edit");
   optionEdit?.addEventListener("click", function () {
     modalOverlay?.classList.add("active");
     modal?.classList.add("active");
     galleryModal?.classList.add("active");
     arrowModal?.classList.remove("active");
-
     renderGalleryModal();
   });
 }
@@ -313,6 +322,7 @@ function addPhotoModal() {
     galleryModal!.innerHTML = "";
     titleModal!.textContent = "Ajout Photo";
     modalBtnEdit.value = "Valider";
+    modalBtnEdit.style.background = "grey";
     renderUploadModal();
     categorySelect();
     imagePreview();
@@ -365,16 +375,17 @@ function arrowReturn() {
   arrow?.addEventListener("click", function () {
     console.log("click arrow");
     galleryModal?.classList.add("active");
-    modalContent?.classList.remove("active");
     titleModal!.textContent = "Galerie photo";
     modalBtnEdit.value = "Ajouter photo";
-    uploadContentDiv?.classList.remove("active");
-    uploadContentDiv.innerHTML = "";
+    uploadContent?.classList.remove("active");
+    if (!uploadContent) {
+      return;
+    }
+    uploadContent.innerHTML = "";
     arrowModal?.classList.remove("active");
     renderGalleryModal();
   });
 }
-
 // Fonction pour fermer la modale
 function closeModal() {
   let closeBtn = document.querySelector(".close-button");
@@ -382,25 +393,15 @@ function closeModal() {
     modal?.classList.remove("active");
     modalOverlay?.classList.remove("active");
     galleryModal?.classList.remove("active");
-    modalContent?.classList.remove("active");
     titleModal!.textContent = "Galerie photo";
     modalBtnEdit.value = "Valider";
-    uploadContentDiv?.classList.remove("active");
-    uploadContentDiv.innerHTML = "";
+    uploadContent?.classList.remove("active");
+    if (!uploadContent) {
+      return;
+    }
+    uploadContent.innerHTML = "";
   });
 }
-
-// // Test bouton "Ajouter une photo / Valider"
-// modalBtnEdit?.addEventListener("click", function () {
-//   if (
-//     galleryModal?.classList.contains("active") &&
-//     !uploadContent?.classList.contains("active")
-//   ) {
-//     console.log('click btn "ajouter une photo" ok');
-//   } else {
-//     console.log('click btn "Valider" ok');
-//   }
-// });
 
 // Action du bouton "valider" dans le formulaire "Ajout photo"
 modalBtnEdit?.addEventListener("click", async function () {
@@ -436,6 +437,7 @@ modalBtnEdit?.addEventListener("click", async function () {
 
     // if-1.1 = vérifie si les entrées du formulaire sont remplies
     if (titleContent && categoryContent && file) {
+      modalBtnEdit.style.background = "";
       const formData = new FormData();
 
       // si if-1.1 OK, crée le formData
@@ -472,7 +474,7 @@ modalBtnEdit?.addEventListener("click", async function () {
 });
 // Fin Modale
 
-// reset userToken aprés logout
+// verifie le userToken aprés un rechargement de la page et execute ces fonctions
 document.addEventListener("DOMContentLoaded", function () {
   if (userToken) {
     console.log("Token:", userToken);

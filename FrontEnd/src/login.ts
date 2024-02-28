@@ -57,17 +57,3 @@ document
       alert("E-mail ou mot de passe incorrect");
     }
   });
-
-// //  check si le token est dans le local storage
-// function checkTokenPresence() {
-//   setInterval(() => {
-//     const userToken = localStorage.getItem("userToken");
-//     if (userToken) {
-//       console.log("Token présent:", userToken);
-//     } else {
-//       console.log("Token absent");
-//     }
-//   }, 5000); // Vérifie toutes les 5 secondes
-// }
-
-// checkTokenPresence();

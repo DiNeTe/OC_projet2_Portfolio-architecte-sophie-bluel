@@ -272,8 +272,31 @@ h2 {
   width: 100%;
 } */
 
-.gallery-modal img {
+.gallery-undo {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.work-container {
   width: 20%;
+  position: relative;
+padding:0;
+margin: 0;
+}
+
+.work-container img {
+  width: 100%;
+  display: block;
+}
+
+.delete-icon {
+  background-color: black;
+  display: flex;
+  justify-content: end;
+  float: right;
+  position: absolute;
+  top: 12px;
+  right: 5px;
 }
 
 .modal.active input,
@@ -461,10 +484,6 @@ li img:hover {
   visibility: hidden;
 }
 
-.modal content {
-  z-index: 250;
-}
-
 .upload-content {
   width: 100%;
   display: flex;
@@ -477,7 +496,6 @@ li img:hover {
 
 .gallery-modal,
 .arrow-modal,
-.modal-content,
 .upload-content {
   visibility: hidden;
 }
@@ -486,7 +504,6 @@ li img:hover {
 .modal.active,
 .arrow-modal.active,
 .gallery-modal.active,
-.modal-content.active,
 .modal-overlay.active,
 .upload-content.active,
 .add-photo.active,
