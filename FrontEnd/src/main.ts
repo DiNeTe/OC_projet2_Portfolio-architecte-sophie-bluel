@@ -136,7 +136,6 @@ function logoLogout() {
     loginLogout.textContent = "login";
   }
 }
-
 // MODALE
 
 // Sélection des éléments fixe pour la modale
@@ -190,7 +189,6 @@ function renderGalleryModal() {
 
       if (confirmWindows) {
         console.log("réponse de la fenêtre de confirmation : ", confirmWindows);
-
         try {
           const url = `http://localhost:5678/api/works/${work.id}`; // Utilise les backticks et ${work.id}
           const response = await fetch(url, {
@@ -204,7 +202,11 @@ function renderGalleryModal() {
           if (!response.ok) {
             throw new Error(`Erreur HTTP : ${response.status}`);
           } else {
-            galleryModal!.innerHTML = "";
+            // Mise à jour de allWorks pour enlever l'œuvre supprimée
+            allWorks = allWorks.filter((workItem) => workItem.id !== work.id);
+            // Rechargement de la galerie modale avec les œuvres restantes
+            renderGalleryModal();
+            loadWorks();
           }
         } catch (error) {
           console.error("Erreur lors de la suppression du travail :", error);
@@ -228,43 +230,50 @@ function renderGalleryModal() {
   modalBtnEdit.value = "Ajouter une photo";
 }
 
-// Fonction pour afficher le contenu "Ajout photo"
+// Fonction pour créer le contenu "Ajout photo"
 function renderUploadModal() {
   if (!uploadContent) {
     return;
   }
   uploadContent.innerHTML = "";
 
-  // Crée la div img-preview
-  const imgPreview = document.createElement("div");
-  imgPreview.className = "img-preview";
-  imgPreview.id = "img-preview";
-  // Crée les éléments pour la div upload-img
-  const imgPreviewLoaded = document.createElement("img");
-  imgPreviewLoaded.id = "img-preview-loaded";
-  // Ajoute les nouveaux éléments à la div 'uploadImgDiv'
-  imgPreview.appendChild(imgPreviewLoaded);
-
-  // Crée la div upload-img
+  // Crée la div upload-container
   const uploadImgDiv = document.createElement("div");
-  uploadImgDiv.className = "upload-img";
-  uploadImgDiv.id = "upload-img";
-  // Crée les éléments pour la div upload-img
-  const img = document.createElement("img"); // mettre SVG
+  uploadImgDiv.className = "upload-container";
+  uploadImgDiv.id = "upload-container";
+  // Crée les éléments pour la div upload-container
+  const img = document.createElement("div");
+  img.classList.add("before-preview");
+  img.id = "img-before-preview";
+  img.innerHTML = `
+  <svg width="76" height="76" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+   <path d="M63.5517 15.8879C64.7228 15.8879 65.681 16.8461 65.681 18.0172V60.5768L65.0156 59.7118L46.9165 36.2894C46.3176 35.5042 45.3727 35.0517 44.3879 35.0517C43.4031 35.0517 42.4715 35.5042 41.8594 36.2894L30.8136 50.5824L26.7546 44.8998C26.1557 44.0614 25.1975 43.569 24.1595 43.569C23.1214 43.569 22.1632 44.0614 21.5644 44.9131L10.9178 59.8183L10.319 60.6434V60.6034V18.0172C10.319 16.8461 11.2772 15.8879 12.4483 15.8879H63.5517ZM12.4483 9.5C7.75048 9.5 3.93103 13.3195 3.93103 18.0172V60.6034C3.93103 65.3012 7.75048 69.1207 12.4483 69.1207H63.5517C68.2495 69.1207 72.069 65.3012 72.069 60.6034V18.0172C72.069 13.3195 68.2495 9.5 63.5517 9.5H12.4483ZM23.0948 35.0517C23.9337 35.0517 24.7644 34.8865 25.5394 34.5655C26.3144 34.2444 27.0186 33.7739 27.6118 33.1807C28.2049 32.5876 28.6755 31.8834 28.9965 31.1083C29.3175 30.3333 29.4828 29.5027 29.4828 28.6638C29.4828 27.8249 29.3175 26.9943 28.9965 26.2192C28.6755 25.4442 28.2049 24.74 27.6118 24.1468C27.0186 23.5537 26.3144 23.0831 25.5394 22.7621C24.7644 22.4411 23.9337 22.2759 23.0948 22.2759C22.2559 22.2759 21.4253 22.4411 20.6503 22.7621C19.8752 23.0831 19.171 23.5537 18.5779 24.1468C17.9847 24.74 17.5142 25.4442 17.1931 26.2192C16.8721 26.9943 16.7069 27.8249 16.7069 28.6638C16.7069 29.5027 16.8721 30.3333 17.1931 31.1083C17.5142 31.8834 17.9847 32.5876 18.5779 33.1807C19.171 33.7739 19.8752 34.2444 20.6503 34.5655C21.4253 34.8865 22.2559 35.0517 23.0948 35.0517Z" fill="#B9C5CC"/>
+  </svg>`;
+  const imgPreview = document.createElement("img");
+  imgPreview.id = "img-preview";
   const uploadButton = document.createElement("button");
-  uploadButton.className = "upload-img-btn";
+  uploadButton.className = "before-preview";
+  uploadButton.id = "upload-img-btn";
   uploadButton.textContent = "+ Ajouter photo";
   uploadButton.onclick = () =>
     document.getElementById("upload-img-input")?.click();
+  const imgInfo = document.createElement("span");
+  imgInfo.classList.add("before-preview");
+  // imgInfo.className = "img-info";
+  imgInfo.id = "img-info";
+  imgInfo.innerHTML = "jpg, png : 4mo max";
   const inputFile = document.createElement("input");
   inputFile.type = "file";
+  inputFile.classList.add("user-input");
   inputFile.id = "upload-img-input";
-  inputFile.name = "upload-img-input";
+  inputFile.name = "before-preview";
   inputFile.accept = "image/*";
   // Ajoute les nouveaux éléments à la div 'uploadImgDiv'
   uploadImgDiv.appendChild(img);
+  uploadImgDiv.appendChild(imgPreview);
   uploadImgDiv.appendChild(uploadButton);
   uploadImgDiv.appendChild(inputFile);
+  uploadImgDiv.appendChild(imgInfo);
 
   // Crée la div upload-form
   const uploadForm = document.createElement("form");
@@ -274,7 +283,7 @@ function renderUploadModal() {
   titleLabel.setAttribute("for", "title");
   titleLabel.textContent = "Titre";
   const titleInput = document.createElement("input");
-  titleInput.className = "upload-form";
+  titleInput.className = "user-input";
   titleInput.type = "text";
   titleInput.id = "title";
   titleInput.name = "title";
@@ -283,7 +292,7 @@ function renderUploadModal() {
   categoryLabel.textContent = "Catégorie";
   const breakElement = document.createElement("br");
   const categorySelect = document.createElement("select");
-  categorySelect.className = "upload-form";
+  categorySelect.className = "user-input";
   categorySelect.id = "category";
   categorySelect.name = "category";
   const categorySelectEmpty = document.createElement("option");
@@ -296,7 +305,6 @@ function renderUploadModal() {
   uploadForm.appendChild(breakElement);
   uploadForm.appendChild(categorySelect);
   // Ajoute les nouveaux éléments à la div 'upload-content'
-  uploadContent.appendChild(imgPreview);
   uploadContent.appendChild(uploadImgDiv);
   uploadContent.appendChild(uploadForm);
 }
@@ -326,6 +334,7 @@ function addPhotoModal() {
     renderUploadModal();
     categorySelect();
     imagePreview();
+    userInputsFill();
   });
 }
 
@@ -333,12 +342,15 @@ function imagePreview() {
   const inputElement = document.getElementById(
     "upload-img-input"
   ) as HTMLInputElement;
-  const imgPreview = document.getElementById(
-    "img-preview-loaded"
-  ) as HTMLImageElement;
+  const imgPreview = document.getElementById("img-preview") as HTMLImageElement;
 
   inputElement?.addEventListener("change", function (event) {
     console.log("image chargée");
+
+    const beforePreview = document.querySelectorAll(".before-preview");
+    beforePreview.forEach((element) => {
+      element.classList.add("hidden");
+    });
 
     const target = event.target as HTMLInputElement;
     const file = target.files && target.files[0];
@@ -369,6 +381,15 @@ function categorySelect() {
   });
 }
 
+function imgPreviewHidden() {
+  const imgBeforePreview = document.getElementById("img-before-preview");
+  const uploadImgInput = document.getElementById("upload-img-input");
+  const imgInfo = document.getElementById("img-info");
+  imgBeforePreview?.classList.add("hidden");
+  uploadImgInput?.classList.add("hidden");
+  imgInfo?.classList.add("hidden");
+}
+
 // fonction pour le fonctionnement de la flêche retour dans la modale
 function arrowReturn() {
   let arrow = document.getElementById("arrow-modal");
@@ -386,6 +407,20 @@ function arrowReturn() {
     renderGalleryModal();
   });
 }
+function closeModal2() {
+  modal?.classList.remove("active");
+  modalOverlay?.classList.remove("active");
+  galleryModal?.classList.remove("active");
+  titleModal!.textContent = "Galerie photo";
+  modalBtnEdit.value = "Valider";
+  uploadContent?.classList.remove("active");
+  arrowModal?.classList.remove("active");
+  if (!uploadContent) {
+    return;
+  }
+  uploadContent.innerHTML = "";
+}
+
 // Fonction pour fermer la modale
 function closeModal() {
   let closeBtn = document.querySelector(".close-button");
@@ -400,6 +435,26 @@ function closeModal() {
       return;
     }
     uploadContent.innerHTML = "";
+  });
+}
+// Fonction pour dégriser le bouton valider lorsque tous les champs sont remplis
+function userInputsFill() {
+  const userInputs = document.querySelectorAll(".user-input");
+  // Ajoute l'écouteur d'événements à chaque élément de la NodeList
+  userInputs.forEach((inputElement) => {
+    inputElement.addEventListener("input", function (event) {
+      console.log("éléments remplis");
+
+      // Cast de 'event.target' au type HTMLInputElement pour accéder à 'files'
+      const target = event.target as HTMLInputElement;
+      const file = target.files && target.files[0];
+
+      if (file) {
+        modalBtnEdit.style.background = "";
+      } else {
+        return;
+      }
+    });
   });
 }
 
@@ -437,7 +492,6 @@ modalBtnEdit?.addEventListener("click", async function () {
 
     // if-1.1 = vérifie si les entrées du formulaire sont remplies
     if (titleContent && categoryContent && file) {
-      modalBtnEdit.style.background = "";
       const formData = new FormData();
 
       // si if-1.1 OK, crée le formData
@@ -458,6 +512,9 @@ modalBtnEdit?.addEventListener("click", async function () {
         // if-1.3 = vérifie la réponse de l'API
         if (!response.ok) {
           throw new Error(`Erreur HTTP : ${response.status}`);
+        } else {
+          closeModal2();
+          loadWorks();
         }
 
         // const result = await response.json();

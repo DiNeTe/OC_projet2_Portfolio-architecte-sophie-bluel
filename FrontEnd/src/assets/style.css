@@ -163,6 +163,12 @@ nav li {
   font-size: 1.2em;
 }
 
+nav a:hover,
+nav li:hover {
+  font-weight: bold;
+  color: black;
+}
+
 a,
 ul,
 button,
@@ -280,13 +286,12 @@ h2 {
 .work-container {
   width: 20%;
   position: relative;
-padding:0;
-margin: 0;
 }
 
 .work-container img {
   width: 100%;
-  display: block;
+  height: 100%;
+  object-fit: cover;
 }
 
 .delete-icon {
@@ -295,20 +300,14 @@ margin: 0;
   justify-content: end;
   float: right;
   position: absolute;
-  top: 12px;
-  right: 5px;
+  top: 2px;
+  right: 2px;
 }
 
 .modal.active input,
 .modal h2 {
   justify-content: center;
   display: flex;
-}
-
-nav a:hover,
-nav li:hover {
-  font-weight: bold;
-  color: black;
 }
 
 .gallery {
@@ -321,6 +320,119 @@ nav li:hover {
 
 .gallery img {
   width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Style de l'overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.2s, opacity 0.2s;
+}
+
+/* Style de base de la modale */
+.modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  visibility: hidden;
+}
+
+.upload-content {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.hidden {
+  display: none !important;
+}
+
+#upload-container {
+  background-color: #E8F1F6;
+  justify-content: center;
+  flex-direction: column;
+  display: flex;
+  align-items: center;
+}
+
+#img-before-preview {
+  display: flex;
+  justify-content: center;
+}
+
+#img-preview {
+  max-width: 300px;
+  justify-content: center;
+}
+
+#upload-img-btn {
+  width: 173px;
+height: 36px;
+border-radius: 50px;
+}
+
+#upload-img-input {
+  display: none;
+}
+
+#img-info {
+  justify-content: center;
+  display: flex;
+  font-family: Work Sans;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 12px;
+  letter-spacing: 0em;
+  text-align: center;
+}
+
+#category, #title {
+  height: 50px;
+  box-shadow: 0px 4px 14px 0px #00000017;
+
+}
+
+ #category {
+  width: 100%;
+} 
+
+#title {
+  width: 97%;
+}
+
+
+.gallery-modal,
+.arrow-modal,
+.upload-content {
+  visibility: hidden;
+}
+
+/* Style lorsque la modale est affichée */
+.modal.active,
+.arrow-modal.active,
+.gallery-modal.active,
+.modal-overlay.active,
+.upload-content.active,
+.add-photo.active,
+.type-input.active {
+  visibility: visible;
+  opacity: 1;
+}
+
+.close-button {
+  float: right;
+  cursor: pointer;
 }
 
 .filters {
@@ -432,10 +544,6 @@ input[type="submit"]:hover {
   border: none;
   box-shadow: 0px 4px 14px rgba(0, 0, 0, 0.09);
 }
-#upload-img-input {
-  display: none;
-}
-
 input[type="submit"] {
   font-family: "Syne";
   font-weight: 700;
@@ -456,63 +564,4 @@ footer nav ul {
 
 li img:hover {
   filter: drop-shadow(1px 1px 0 black);
-}
-
-/* Style de l'overlay */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 100;
-  background: rgba(0, 0, 0, 0.5);
-  visibility: hidden;
-  opacity: 0;
-  transition: visibility 0.2s, opacity 0.2s;
-}
-
-/* Style de base de la modale */
-.modal {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-color: white;
-  padding: 20px;
-  z-index: 200;
-  visibility: hidden;
-}
-
-.upload-content {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-#img-preview-loaded {
-  max-width: 300px;
-}
-
-.gallery-modal,
-.arrow-modal,
-.upload-content {
-  visibility: hidden;
-}
-
-/* Style lorsque la modale est affichée */
-.modal.active,
-.arrow-modal.active,
-.gallery-modal.active,
-.modal-overlay.active,
-.upload-content.active,
-.add-photo.active,
-.type-input.active {
-  visibility: visible;
-  opacity: 1;
-}
-
-.close-button {
-  float: right;
-  cursor: pointer;
 }
