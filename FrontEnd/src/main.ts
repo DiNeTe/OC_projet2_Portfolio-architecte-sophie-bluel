@@ -1,4 +1,4 @@
-// CSS importé depuis le HTML pour eviter effet de rechargement index/login
+const userToken = localStorage.getItem("userToken");
 
 type Category = {
   id: number;
@@ -14,36 +14,39 @@ type Work = {
   category: Category;
 };
 
-let allWorks: Work[] = []; // Variable globale pour stocker tous les travaux
-
-// Fonction pour afficher toute la gallerie
-async function loadWorks() {
-  try {
-    const response = await fetch("http://localhost:5678/api/works");
-    allWorks = await response.json(); // Stocke les travaux dans la variable globale
-    renderGallery(allWorks); // Affiche toute la galerie
-  } catch (error) {
-    console.error("Erreur lors de la récupération des travaux:", error);
-  }
-}
+let allWorks: Work[] = []; // variable globale pour stocker tous les travaux dans un tableau d'objet
 
 function renderGallery(works: Work[]) {
   const gallery = document.querySelector(".gallery");
 
   if (!gallery) return;
 
-  gallery.innerHTML = ""; // Nettoie la galerie avant d'ajouter de nouveaux travaux
+  gallery.innerHTML = ""; // nettoie la galerie avant d'ajouter de nouveaux travaux
 
   works.forEach((work) => {
-    const figure = document.createElement("figure");
+    // parcours chaque œuvre dans le tableau "works"
+    const figure = document.createElement("figure"); // crée un nouvel élément "figure" pour chaque œuvre
 
+    // crée le contenu de 'figure'
     figure.innerHTML = `
             <img src="${work.imageUrl}" alt="${work.title}">
             <figcaption>${work.title}</figcaption>
         `;
 
+    // Ajoute le nouvel élément 'figure' à l'élément "galley""
     gallery.appendChild(figure);
   });
+}
+
+// Fonction pour recupérer la gallerie depuis l'API
+async function loadWorks() {
+  try {
+    const response = await fetch("http://localhost:5678/api/works");
+    allWorks = await response.json(); // stocke les travaux dans la variable globale
+    renderGallery(allWorks); // affiche toute la galerie
+  } catch (error) {
+    console.error("Erreur lors de la récupération des travaux:", error);
+  }
 }
 
 // Fonction pour récupérer les catégories depuis l'API
@@ -64,7 +67,6 @@ async function getCategories() {
       let btnSVG = document.getElementById("btnSVG");
       if (btnSVG) {
         btnSVG.style.display = "none";
-        let optionEdit = document.getElementById("option-edit");
         if (optionEdit) {
           optionEdit.innerText = "";
         }
@@ -81,9 +83,7 @@ function createFilterButtons(categories: Category[]) {
 
   if (!filters) return;
 
-  // filters.innerHTML = '';
-
-  // Crée un bouton filtre 'Tous'
+  // Crée un bouton filtre supplémentaire : 'Tous'
   const allButton = document.createElement("button");
   allButton.innerText = "Tous";
   allButton.classList.add("filter-button");
@@ -120,8 +120,6 @@ function filterGallery(category: "all" | Category) {
   }
 }
 
-const userToken = localStorage.getItem("userToken");
-
 // Fonction pour changer le texte de login en logout
 function logoLogout() {
   const loginLogout = document.querySelector("nav a") as HTMLLIElement | null;
@@ -136,10 +134,12 @@ function logoLogout() {
     loginLogout.textContent = "login";
   }
 }
+
+const optionEdit = document.getElementById("option-edit");
+
 // MODALE
 
 // Sélection des éléments fixe pour la modale
-
 const modalOverlay = document.getElementById(
   "modal-overlay"
 ) as HTMLDivElement | null;
@@ -153,6 +153,9 @@ const titleModal = document.getElementById(
 const closeButton = document.querySelector(
   ".close-button"
 ) as HTMLSpanElement | null;
+closeButton?.addEventListener("click", function () {
+  closeModal();
+});
 
 const galleryModal = document.getElementById(
   "gallery-modal"
@@ -162,11 +165,23 @@ const uploadContent = document.getElementById(
   "upload-content"
 ) as HTMLDivElement | null;
 
-const arrowModal = document.getElementById("arrow-modal");
-
 const modalBtnEdit = document.getElementById("btn-edit") as HTMLInputElement;
 
-// Fonctions MODALE
+const arrowModal = document.getElementById("arrow-modal");
+arrowModal?.addEventListener("click", function () {
+  arrowReturn();
+});
+
+// Fonction pour ouvrir le contenu "Galerie" dans la modale
+function openModal() {
+  optionEdit?.addEventListener("click", function () {
+    modalOverlay?.classList.add("active");
+    modal?.classList.add("active");
+    galleryModal?.classList.add("active");
+    arrowModal?.classList.remove("active");
+    renderGalleryModal();
+  });
+}
 
 // Fonction pour afficher le contenu "galerie"
 function renderGalleryModal() {
@@ -304,21 +319,10 @@ function renderUploadModal() {
   uploadForm.appendChild(categoryLabel);
   uploadForm.appendChild(breakElement);
   uploadForm.appendChild(categorySelect);
-  // Ajoute les nouveaux éléments à la div 'upload-content'
+
+  // Ajoute "optionEdit" & "uploadForm" à la div "upload-content"
   uploadContent.appendChild(uploadContainer);
   uploadContent.appendChild(uploadForm);
-}
-
-// Fonction pour ouvrir le contenu "Galerie" dans la modale
-function openModal() {
-  const optionEdit = document.getElementById("option-edit");
-  optionEdit?.addEventListener("click", function () {
-    modalOverlay?.classList.add("active");
-    modal?.classList.add("active");
-    galleryModal?.classList.add("active");
-    arrowModal?.classList.remove("active");
-    renderGalleryModal();
-  });
 }
 
 // Fonction pour ouvrir le contenu "Ajout photo" dans la modale
@@ -338,6 +342,26 @@ function addPhotoModal() {
   });
 }
 
+// fonction pour remplir le select "catégorie"
+function categorySelect() {
+  const category = document.getElementById("category") as HTMLSelectElement;
+  // Constante pour suivre les categories et eviter les doublons
+  const addedCategories: { [key: number]: boolean } = {};
+
+  allWorks.forEach((work) => {
+    // vérifie si l'ID de la catégorie n'a pas déjà été ajouté à l'élément select
+    if (!addedCategories[work.category.id]) {
+      const option = new Option(
+        work.category.name,
+        work.category.id.toString()
+      );
+      category.add(option);
+      addedCategories[work.category.id] = true;
+    }
+  });
+}
+
+// Fonction pour génerer la preview de l'oeuvre à ajouter
 function imagePreview() {
   const inputElement = document.getElementById(
     "upload-img-input"
@@ -362,25 +386,6 @@ function imagePreview() {
   });
 }
 
-// fonction pour remplir le select "catégorie"
-function categorySelect() {
-  const category = document.getElementById("category") as HTMLSelectElement;
-  // Constante pour suivre les categories et eviter les doublons
-  const addedCategories: { [key: number]: boolean } = {};
-
-  allWorks.forEach((work) => {
-    // vérifie si l'ID de la catégorie n'a pas encore été ajouté à l'élément select
-    if (!addedCategories[work.category.id]) {
-      const option = new Option(
-        work.category.name,
-        work.category.id.toString()
-      );
-      category.add(option);
-      addedCategories[work.category.id] = true;
-    }
-  });
-}
-
 function imgPreviewHidden() {
   const imgBeforePreview = document.getElementById("img-before-preview");
   const uploadImgInput = document.getElementById("upload-img-input");
@@ -388,54 +393,6 @@ function imgPreviewHidden() {
   imgBeforePreview?.classList.add("hidden");
   uploadImgInput?.classList.add("hidden");
   imgInfo?.classList.add("hidden");
-}
-
-// fonction pour le fonctionnement de la flêche retour dans la modale
-function arrowReturn() {
-  let arrow = document.getElementById("arrow-modal");
-  arrow?.addEventListener("click", function () {
-    console.log("click arrow");
-    galleryModal?.classList.add("active");
-    titleModal!.textContent = "Galerie photo";
-    modalBtnEdit.value = "Ajouter photo";
-    uploadContent?.classList.remove("active");
-    if (!uploadContent) {
-      return;
-    }
-    uploadContent.innerHTML = "";
-    arrowModal?.classList.remove("active");
-    renderGalleryModal();
-  });
-}
-function closeModal2() {
-  modal?.classList.remove("active");
-  modalOverlay?.classList.remove("active");
-  galleryModal?.classList.remove("active");
-  titleModal!.textContent = "Galerie photo";
-  modalBtnEdit.value = "Valider";
-  uploadContent?.classList.remove("active");
-  arrowModal?.classList.remove("active");
-  if (!uploadContent) {
-    return;
-  }
-  uploadContent.innerHTML = "";
-}
-
-// Fonction pour fermer la modale
-function closeModal() {
-  let closeBtn = document.querySelector(".close-button");
-  closeBtn?.addEventListener("click", function () {
-    modal?.classList.remove("active");
-    modalOverlay?.classList.remove("active");
-    galleryModal?.classList.remove("active");
-    titleModal!.textContent = "Galerie photo";
-    modalBtnEdit.value = "Valider";
-    uploadContent?.classList.remove("active");
-    if (!uploadContent) {
-      return;
-    }
-    uploadContent.innerHTML = "";
-  });
 }
 
 // // Fonction pour dégriser le bouton valider lorsque tous les champs sont remplis
@@ -455,6 +412,36 @@ function userInputsFill() {
   inputFile.addEventListener("change", checkInputs);
   titleInput.addEventListener("input", checkInputs);
   category.addEventListener("change", checkInputs);
+}
+
+// fonction pour le fonctionnement de la flêche retour dans la modale
+function arrowReturn() {
+  console.log("click arrow");
+  galleryModal?.classList.add("active");
+  titleModal!.textContent = "Galerie photo";
+  modalBtnEdit.value = "Ajouter photo";
+  uploadContent?.classList.remove("active");
+  if (!uploadContent) {
+    return;
+  }
+  uploadContent.innerHTML = "";
+  arrowModal?.classList.remove("active");
+  renderGalleryModal();
+}
+
+// Fonction pour fermer la modale
+function closeModal() {
+  modal?.classList.remove("active");
+  modalOverlay?.classList.remove("active");
+  galleryModal?.classList.remove("active");
+  titleModal!.textContent = "Galerie photo";
+  modalBtnEdit.value = "Valider";
+  uploadContent?.classList.remove("active");
+  arrowModal?.classList.remove("active");
+  if (!uploadContent) {
+    return;
+  }
+  uploadContent.innerHTML = "";
 }
 
 // Action du bouton "valider" dans le formulaire "Ajout photo"
@@ -512,7 +499,7 @@ modalBtnEdit?.addEventListener("click", async function () {
         if (!response.ok) {
           throw new Error(`Erreur HTTP : ${response.status}`);
         } else {
-          closeModal2();
+          closeModal();
           loadWorks();
         }
 
@@ -527,8 +514,7 @@ modalBtnEdit?.addEventListener("click", async function () {
       alert("Veuillez remplir tous les champs avant d'ajouter une photo");
     }
   }
-});
-// Fin Modale
+}); // FIN MODALE
 
 // verifie le userToken aprés un rechargement de la page et execute ces fonctions
 document.addEventListener("DOMContentLoaded", function () {
@@ -541,8 +527,6 @@ document.addEventListener("DOMContentLoaded", function () {
   getCategories();
   logoLogout();
   openModal();
-  closeModal();
   arrowReturn();
   addPhotoModal();
-  // userInputsFill();
 });
