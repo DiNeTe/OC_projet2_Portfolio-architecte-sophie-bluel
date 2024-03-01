@@ -238,9 +238,9 @@ function renderUploadModal() {
   uploadContent.innerHTML = "";
 
   // Crée la div upload-container
-  const uploadImgDiv = document.createElement("div");
-  uploadImgDiv.className = "upload-container";
-  uploadImgDiv.id = "upload-container";
+  const uploadContainer = document.createElement("div");
+  uploadContainer.className = "upload-container";
+  uploadContainer.id = "upload-container";
   // Crée les éléments pour la div upload-container
   const img = document.createElement("div");
   img.classList.add("before-preview");
@@ -268,12 +268,12 @@ function renderUploadModal() {
   inputFile.id = "upload-img-input";
   inputFile.name = "before-preview";
   inputFile.accept = "image/*";
-  // Ajoute les nouveaux éléments à la div 'uploadImgDiv'
-  uploadImgDiv.appendChild(img);
-  uploadImgDiv.appendChild(imgPreview);
-  uploadImgDiv.appendChild(uploadButton);
-  uploadImgDiv.appendChild(inputFile);
-  uploadImgDiv.appendChild(imgInfo);
+  // Ajoute les nouveaux éléments à la div 'uploadContainer'
+  uploadContainer.appendChild(img);
+  uploadContainer.appendChild(imgPreview);
+  uploadContainer.appendChild(uploadButton);
+  uploadContainer.appendChild(inputFile);
+  uploadContainer.appendChild(imgInfo);
 
   // Crée la div upload-form
   const uploadForm = document.createElement("form");
@@ -305,7 +305,7 @@ function renderUploadModal() {
   uploadForm.appendChild(breakElement);
   uploadForm.appendChild(categorySelect);
   // Ajoute les nouveaux éléments à la div 'upload-content'
-  uploadContent.appendChild(uploadImgDiv);
+  uploadContent.appendChild(uploadContainer);
   uploadContent.appendChild(uploadForm);
 }
 
@@ -330,7 +330,7 @@ function addPhotoModal() {
     galleryModal!.innerHTML = "";
     titleModal!.textContent = "Ajout Photo";
     modalBtnEdit.value = "Valider";
-    modalBtnEdit.style.background = "grey";
+    modalBtnEdit.style.background = "#A7A7A7";
     renderUploadModal();
     categorySelect();
     imagePreview();
@@ -437,25 +437,24 @@ function closeModal() {
     uploadContent.innerHTML = "";
   });
 }
-// Fonction pour dégriser le bouton valider lorsque tous les champs sont remplis
+
+// // Fonction pour dégriser le bouton valider lorsque tous les champs sont remplis
 function userInputsFill() {
-  const userInputs = document.querySelectorAll(".user-input");
-  // Ajoute l'écouteur d'événements à chaque élément de la NodeList
-  userInputs.forEach((inputElement) => {
-    inputElement.addEventListener("input", function (event) {
-      console.log("éléments remplis");
+  const inputFile = document.getElementById(
+    "upload-img-input"
+  ) as HTMLInputElement;
+  const titleInput = document.getElementById("title") as HTMLInputElement;
+  const category = document.getElementById("category") as HTMLSelectElement;
 
-      // Cast de 'event.target' au type HTMLInputElement pour accéder à 'files'
-      const target = event.target as HTMLInputElement;
-      const file = target.files && target.files[0];
+  const checkInputs = () => {
+    let inputsFilled =
+      inputFile.files!.length > 0 && titleInput.value && category.value;
+    modalBtnEdit.style.background = inputsFilled ? "#1D6154" : "#A7A7A7";
+  };
 
-      if (file) {
-        modalBtnEdit.style.background = "";
-      } else {
-        return;
-      }
-    });
-  });
+  inputFile.addEventListener("change", checkInputs);
+  titleInput.addEventListener("input", checkInputs);
+  category.addEventListener("change", checkInputs);
 }
 
 // Action du bouton "valider" dans le formulaire "Ajout photo"
@@ -545,4 +544,5 @@ document.addEventListener("DOMContentLoaded", function () {
   closeModal();
   arrowReturn();
   addPhotoModal();
+  // userInputsFill();
 });
