@@ -33,7 +33,7 @@ function renderGallery(works: Work[]) {
             <figcaption>${work.title}</figcaption>
         `;
 
-    // Ajoute le nouvel élément 'figure' à l'élément "galley""
+    // Ajoute le nouvel élément 'figure' à l'élément "gallery""
     gallery.appendChild(figure);
   });
 }
@@ -46,34 +46,6 @@ async function loadWorks() {
     renderGallery(allWorks); // affiche toute la galerie
   } catch (error) {
     console.error("Erreur lors de la récupération des travaux:", error);
-  }
-}
-
-// Fonction pour récupérer les catégories depuis l'API
-async function getCategories() {
-  try {
-    const response = await fetch("http://localhost:5678/api/categories");
-
-    if (!response.ok) {
-      throw new Error("Network response was not ok " + response.statusText);
-    }
-    const categories: Category[] = await response.json(); // Converti la réponse en JSON
-
-    // Vérifie la présence du token avant de créer les boutons filtres
-    const userToken = localStorage.getItem("userToken");
-    if (!userToken) {
-      createFilterButtons(categories);
-
-      let btnSVG = document.getElementById("btnSVG");
-      if (btnSVG) {
-        btnSVG.style.display = "none";
-        if (optionEdit) {
-          optionEdit.innerText = "";
-        }
-      }
-    }
-  } catch (error) {
-    console.error("There has been a problem with fetch operation:", error);
   }
 }
 
@@ -103,6 +75,34 @@ function createFilterButtons(categories: Category[]) {
   });
 }
 
+// Fonction pour récupérer les catégories depuis l'API
+async function getCategories() {
+  try {
+    const response = await fetch("http://localhost:5678/api/categories");
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const categories: Category[] = await response.json(); // Converti la réponse en JSON
+
+    // Vérifie la présence du token avant de créer les boutons filtres
+    // const userToken = localStorage.getItem("userToken");
+    if (!userToken) {
+      createFilterButtons(categories);
+
+      let btnSVG = document.getElementById("btnSVG");
+      if (btnSVG) {
+        btnSVG.style.display = "none";
+        if (optionEdit) {
+          optionEdit.innerText = "";
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des catégories:", error);
+  }
+}
+
 // Fonction pour filtrer la galerie
 function filterGallery(category: "all" | Category) {
   if (category === "all") {
@@ -110,10 +110,6 @@ function filterGallery(category: "all" | Category) {
   } else {
     const filteredWorks = allWorks.filter((work) => {
       const isMatch = work.category.name === category.name;
-      console.log(
-        `Comparaison : ${work.category.name} === ${category.name}`,
-        isMatch
-      );
       return isMatch;
     });
     renderGallery(filteredWorks);
@@ -123,7 +119,7 @@ function filterGallery(category: "all" | Category) {
 // Fonction pour changer le texte de login en logout
 function logoLogout() {
   const loginLogout = document.querySelector("nav a") as HTMLLIElement | null;
-  // verifie si la constante loginLogout est null (evite erreur loginLogout.textContent)
+  // verifie si la constante loginLogout est null
   if (!loginLogout) {
     console.log("Lien de connexion/déconnexion non trouvé");
     return; // arrette la fonction
@@ -166,20 +162,24 @@ const uploadContent = document.getElementById(
 ) as HTMLDivElement | null;
 
 const modalBtnEdit = document.getElementById("btn-edit") as HTMLInputElement;
+const modalBar =
+  (document.querySelector(".modal-bar") as HTMLDivElement) || null;
 
 const arrowModal = document.getElementById("arrow-modal");
 arrowModal?.addEventListener("click", function () {
   arrowReturn();
 });
 
-// Fonction pour ouvrir le contenu "Galerie" dans la modale
+// Fonction pour ouvrir la modale
 function openModal() {
   optionEdit?.addEventListener("click", function () {
     modalOverlay?.classList.add("active");
     modal?.classList.add("active");
     galleryModal?.classList.add("active");
     arrowModal?.classList.remove("active");
+    modalBtnEdit.style.background = "#1D6154";
     renderGalleryModal();
+    modalBar.style.display = "block";
   });
 }
 
@@ -187,6 +187,7 @@ function openModal() {
 function renderGalleryModal() {
   const modalContent = document.createElement("div");
   modalContent.classList.add("gallery-undo");
+  modalContent.classList.add("active");
   allWorks.forEach((work) => {
     const workContainer = document.createElement("div");
     workContainer.classList.add("work-container");
@@ -194,7 +195,7 @@ function renderGalleryModal() {
     const deleteIcon = document.createElement("div");
     deleteIcon.classList.add("delete-icon");
     deleteIcon.innerHTML = `
-      <svg width="9" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <svg width="9" id="trash-svg" height="11" viewBox="0 0 9 11" fill="none" xmlns="http://www.w3.org/2000/svg">
         <path d="M2.71607 0.35558C2.82455 0.136607 3.04754 0 3.29063 0H5.70938C5.95246 0 6.17545 0.136607 6.28393 0.35558L6.42857 0.642857H8.35714C8.71272 0.642857 9 0.930134 9 1.28571C9 1.64129 8.71272 1.92857 8.35714 1.92857H0.642857C0.287277 1.92857 0 1.64129 0 1.28571C0 0.930134 0.287277 0.642857 0.642857 0.642857H2.57143L2.71607 0.35558ZM0.642857 2.57143H8.35714V9C8.35714 9.70915 7.78058 10.2857 7.07143 10.2857H1.92857C1.21942 10.2857 0.642857 9.70915 0.642857 9V2.57143ZM2.57143 3.85714C2.39464 3.85714 2.25 4.00179 2.25 4.17857V8.67857C2.25 8.85536 2.39464 9 2.57143 9C2.74821 9 2.89286 8.85536 2.89286 8.67857V4.17857C2.89286 4.00179 2.74821 3.85714 2.57143 3.85714ZM4.5 3.85714C4.32321 3.85714 4.17857 4.00179 4.17857 4.17857V8.67857C4.17857 8.85536 4.32321 9 4.5 9C4.67679 9 4.82143 8.85536 4.82143 8.67857V4.17857C4.82143 4.00179 4.67679 3.85714 4.5 3.85714ZM6.42857 3.85714C6.25179 3.85714 6.10714 4.00179 6.10714 4.17857V8.67857C6.10714 8.85536 6.25179 9 6.42857 9C6.60536 9 6.75 8.85536 6.75 8.67857V4.17857C6.75 4.00179 6.60536 3.85714 6.42857 3.85714Z" fill="white"/>
       </svg>`;
     // Supression d'une photo de la gallerie
@@ -258,7 +259,8 @@ function renderUploadModal() {
   uploadContainer.id = "upload-container";
   // Crée les éléments pour la div upload-container
   const img = document.createElement("div");
-  img.classList.add("before-preview");
+  img.classList.add("before-preview"); // uploadContent.innerHTML = "";
+
   img.id = "img-before-preview";
   img.innerHTML = `
   <svg width="76" height="76" viewBox="0 0 76 76" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -421,6 +423,7 @@ function arrowReturn() {
   titleModal!.textContent = "Galerie photo";
   modalBtnEdit.value = "Ajouter photo";
   uploadContent?.classList.remove("active");
+  modalBtnEdit.style.background = "#1D6154";
   if (!uploadContent) {
     return;
   }
@@ -445,7 +448,8 @@ function closeModal() {
 }
 
 // Action du bouton "valider" dans le formulaire "Ajout photo"
-modalBtnEdit?.addEventListener("click", async function () {
+modalBtnEdit.addEventListener("click", async function (event) {
+  event.preventDefault();
   // if-1 = Vérifie si il s'agit bien du bouton "Valider"
   if (
     !galleryModal?.classList.contains("active") &&
@@ -495,21 +499,18 @@ modalBtnEdit?.addEventListener("click", async function () {
 
         console.log('click btn "valider" ok');
 
-        // if-1.3 = vérifie la réponse de l'API
+        // if-1.2 = vérifie la réponse de l'API
         if (!response.ok) {
           throw new Error(`Erreur HTTP : ${response.status}`);
         } else {
           closeModal();
           loadWorks();
         }
-
-        // const result = await response.json();
-        // console.log(result);
       } catch (error) {
         console.error("Erreur lors de l'envoi des données :", error);
       }
     }
-    // if-1.1 (si toutes les entrées du formulaire ne sont pas remplies)
+    // if-1.1 (si toutes les entrées du formulaire ne sont pas toutes remplies)
     else {
       alert("Veuillez remplir tous les champs avant d'ajouter une photo");
     }
@@ -529,4 +530,5 @@ document.addEventListener("DOMContentLoaded", function () {
   openModal();
   arrowReturn();
   addPhotoModal();
+  closeModal();
 });
