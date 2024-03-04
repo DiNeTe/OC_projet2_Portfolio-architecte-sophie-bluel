@@ -447,6 +447,12 @@ function closeModal() {
   uploadContent.innerHTML = "";
 }
 
+window.onclick = function(event) {
+  if (event.target === modalOverlay) {
+    closeModal();
+  }
+}
+
 // Action du bouton "valider" dans le formulaire "Ajout photo"
 modalBtnEdit.addEventListener("click", async function (event) {
   event.preventDefault();
