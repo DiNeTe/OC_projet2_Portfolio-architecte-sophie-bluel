@@ -140,10 +140,45 @@ main {
   padding: 0 8%;
 }
 
+@keyframes slideDown {
+  from {
+    transform: translateY(-100%); /* Part de -100% de la hauteur de l'élément au-dessus de la vue */
+  }
+  to {
+    transform: translateY(0); /* Arrive à sa position normale */
+  }
+}
+
+.edit-bar {
+  justify-content: center;
+  color: white;
+  background: black;
+  padding: 20px;
+  display: flex;
+  animation: slideDown 0.5s ease forwards;
+  position: fixed; 
+  top: 0;
+  left: 0;
+  width: 100vw; /* Largeur de la fenêtre de visualisation */
+  box-sizing: border-box; /* Pour inclure le padding dans la largeur */
+}
+
+.edit-bar svg {
+  margin-right:6px;
+  width: 15.58px;
+}
+
+.edit-bar span {
+  margin-left: 6px;
+font-size: 16px;
+
+}
+
 header {
   display: flex;
   justify-content: space-between;
-  margin: 50px 0;
+  margin-top:50px ;
+  margin-bottom: 50px;
 }
 
 footer {

@@ -16,6 +16,18 @@ type Work = {
 
 let allWorks: Work[] = []; // variable globale pour stocker tous les travaux dans un tableau d'objet
 
+// Fonction pour recupérer la gallerie depuis l'API
+async function loadWorks() {
+  try {
+    const response = await fetch("http://localhost:5678/api/works");
+    allWorks = await response.json(); // stocke les travaux dans la variable globale
+    renderGallery(allWorks); // affiche toute la galerie
+  } catch (error) {
+    console.error("Erreur lors de la récupération des travaux:", error);
+  }
+}
+
+// Fonction pour l'affichage de la gallerie
 function renderGallery(works: Work[]) {
   const gallery = document.querySelector(".gallery");
 
@@ -38,21 +50,36 @@ function renderGallery(works: Work[]) {
   });
 }
 
-// Fonction pour recupérer la gallerie depuis l'API
-async function loadWorks() {
+// Fonction pour récupérer les catégories depuis l'API
+async function getCategories() {
   try {
-    const response = await fetch("http://localhost:5678/api/works");
-    allWorks = await response.json(); // stocke les travaux dans la variable globale
-    renderGallery(allWorks); // affiche toute la galerie
+    const response = await fetch("http://localhost:5678/api/categories");
+
+    if (!response.ok) {
+      throw new Error(response.statusText);
+    }
+    const categories: Category[] = await response.json(); // Converti la réponse en JSON et stock dans 1 tab
+
+    // Vérifie la présence du token avant de créer les boutons filtres
+    if (!userToken) {
+      createFilterButtons(categories);
+      // cache l'icone et le btn "Modifier" pour ouvrir la modale
+      let btnSVG = document.getElementById("btnSVG");
+      if (btnSVG) {
+        btnSVG.style.display = "none";
+        if (optionEdit) {
+          optionEdit.innerText = "";
+        }
+      }
+    }
   } catch (error) {
-    console.error("Erreur lors de la récupération des travaux:", error);
+    console.error("Erreur lors de la récupération des catégories:", error);
   }
 }
 
 // Fonction pour créer les boutons de filtre
 function createFilterButtons(categories: Category[]) {
   const filters = document.querySelector(".filters");
-
   if (!filters) return;
 
   // Crée un bouton filtre supplémentaire : 'Tous'
@@ -75,34 +102,6 @@ function createFilterButtons(categories: Category[]) {
   });
 }
 
-// Fonction pour récupérer les catégories depuis l'API
-async function getCategories() {
-  try {
-    const response = await fetch("http://localhost:5678/api/categories");
-
-    if (!response.ok) {
-      throw new Error(response.statusText);
-    }
-    const categories: Category[] = await response.json(); // Converti la réponse en JSON
-
-    // Vérifie la présence du token avant de créer les boutons filtres
-    // const userToken = localStorage.getItem("userToken");
-    if (!userToken) {
-      createFilterButtons(categories);
-
-      let btnSVG = document.getElementById("btnSVG");
-      if (btnSVG) {
-        btnSVG.style.display = "none";
-        if (optionEdit) {
-          optionEdit.innerText = "";
-        }
-      }
-    }
-  } catch (error) {
-    console.error("Erreur lors de la récupération des catégories:", error);
-  }
-}
-
 // Fonction pour filtrer la galerie
 function filterGallery(category: "all" | Category) {
   if (category === "all") {
@@ -121,7 +120,6 @@ function logoLogout() {
   const loginLogout = document.querySelector("nav a") as HTMLLIElement | null;
   // verifie si la constante loginLogout est null
   if (!loginLogout) {
-    console.log("Lien de connexion/déconnexion non trouvé");
     return; // arrette la fonction
   }
   if (userToken) {
@@ -170,6 +168,22 @@ arrowModal?.addEventListener("click", function () {
   arrowReturn();
 });
 
+// Fonction pour afficher la barre noire de connexion
+function editBar() {
+ const editBar = document.querySelector(".edit-bar") as HTMLDivElement;
+ const header = document.querySelector("header") as HTMLBodyElement;
+ 
+  if (userToken){
+editBar.style.display= "";
+header.style.marginTop="75px"
+editBar.classList.add("animate");
+  }else{
+editBar.style.display= "none";
+header.style.marginTop="50px"
+editBar.classList.remove("animate");
+}
+}
+
 // Fonction pour ouvrir la modale
 function openModal() {
   optionEdit?.addEventListener("click", function () {
@@ -191,7 +205,6 @@ function renderGalleryModal() {
   allWorks.forEach((work) => {
     const workContainer = document.createElement("div");
     workContainer.classList.add("work-container");
-
     const deleteIcon = document.createElement("div");
     deleteIcon.classList.add("delete-icon");
     deleteIcon.innerHTML = `
@@ -200,21 +213,17 @@ function renderGalleryModal() {
       </svg>`;
     // Supression d'une photo de la gallerie
     deleteIcon.addEventListener("click", async function () {
-      console.log("ID selectionnée :", work.id);
       const confirmWindows = confirm("Confirmer la suppression ?");
-
+      
       if (confirmWindows) {
         console.log("réponse de la fenêtre de confirmation : ", confirmWindows);
+       
         try {
           const url = `http://localhost:5678/api/works/${work.id}`; // Utilise les backticks et ${work.id}
           const response = await fetch(url, {
             method: "DELETE",
             headers: { Authorization: `Bearer ${userToken}` },
           });
-
-          console.log("URL API : ", url);
-          console.log(response);
-
           if (!response.ok) {
             throw new Error(`Erreur HTTP : ${response.status}`);
           } else {
@@ -231,11 +240,9 @@ function renderGalleryModal() {
     });
 
     workContainer.appendChild(deleteIcon);
-
     const imgElement = document.createElement("img");
     imgElement.src = work.imageUrl;
     workContainer.appendChild(imgElement);
-
     modalContent.appendChild(workContainer);
   });
 
@@ -418,7 +425,6 @@ function userInputsFill() {
 
 // fonction pour le fonctionnement de la flêche retour dans la modale
 function arrowReturn() {
-  console.log("click arrow");
   galleryModal?.classList.add("active");
   titleModal!.textContent = "Galerie photo";
   modalBtnEdit.value = "Ajouter photo";
@@ -474,18 +480,6 @@ modalBtnEdit.addEventListener("click", async function (event) {
     const categoryContent = categoryElement.value;
     const file = imgElement.files?.[0];
 
-    // verifie les entrées du formulaire par des console.log
-    console.log(
-      !titleElement.value ? "titre : aucun" : "titre : ",
-      titleElement.value
-    );
-    console.log("N° de catégorie : ", categoryElement.value);
-    console.log(
-      !imgElement.files?.[0] ? "Image : aucune image selectionnée" : "Image : ",
-      imgElement.files?.[0]
-    );
-    console.log("User Token : ", userToken);
-
     // if-1.1 = vérifie si les entrées du formulaire sont remplies
     if (titleContent && categoryContent && file) {
       const formData = new FormData();
@@ -502,8 +496,6 @@ modalBtnEdit.addEventListener("click", async function (event) {
           headers: { Authorization: `Bearer ${userToken}` },
           body: formData,
         });
-
-        console.log('click btn "valider" ok');
 
         // if-1.2 = vérifie la réponse de l'API
         if (!response.ok) {
@@ -537,4 +529,5 @@ document.addEventListener("DOMContentLoaded", function () {
   arrowReturn();
   addPhotoModal();
   closeModal();
+  editBar();
 });

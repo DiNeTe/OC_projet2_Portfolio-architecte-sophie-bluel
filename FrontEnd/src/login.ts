@@ -10,9 +10,6 @@ document
   ?.addEventListener("submit", async function (event) {
     // Empêche le rechargement de la page
     event.preventDefault();
-
-    console.log("clic bouton ok");
-
     // Récupère la valeur de l'élément input pour l'email
     const emailLogin =
       document.querySelector<HTMLInputElement>("#emailLogin")?.value;
